@@ -1,0 +1,25 @@
+@import "tailwindcss";
+@plugin "daisyui";
+
+@theme {
+  --color-background: #0b141c;
+  --color-surface: #182028;
+  --color-outline: #30363d;
+  --color-outline-variant: #414752;
+  --color-primary: #58a6ff;
+  --color-secondary: #67df70;
+  --color-tertiary: #fabc45;
+
+  --font-sans: 'Geist', system-ui, sans-serif;
+  --font-mono: 'Geist Mono', ui-monospace, monospace;
+}
+
+body {
+  background-color: #0b141c;
+  color: #e6edf3;
+  margin: 0;
+}
+
+#root {
+  min-height: 100svh;
+}
