@@ -1,0 +1,18 @@
+{
+    "git.enabled": false,
+    "css.validate": false,
+    "css.lint.unknownAtRules": "ignore",
+    "tailwindCSS.validate": false,
+    "tailwindCSS.lint.unknownAtRules": "ignore",
+    "files.exclude": {
+      "node_modules": true,
+      ".vscode": false,
+      ".gitignore": false,
+      "package.json": true,
+      "package-lock.json": true,
+      "biome.json": true,
+      "vite.config.ts": true,
+      "tsconfig.*": true,
+      "public": true
+  }
+}
