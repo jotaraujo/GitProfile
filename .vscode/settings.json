@@ -7,10 +7,10 @@
     "files.exclude": {
       "node_modules": true,
       ".vscode": false,
-      ".gitignore": false,
-      "package.json": true,
+      ".gitignore": true,
+      "package.json": false,
       "package-lock.json": true,
-      "biome.json": true,
+      "biome.json": false,
       "vite.config.ts": true,
       "tsconfig.*": true,
       "public": true
