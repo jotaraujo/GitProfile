@@ -2,9 +2,15 @@ import { createBrowserRouter, RouterProvider } from 'react-router-dom'
 import Home from './pages/Home'
 import ErrorPage from './pages/ErrorPage'
 import Profile from './pages/Profile'
+import RootLayout from './components/layout/RootLayout'
 
 const router = createBrowserRouter([
 	{
+		path: '/',
+		element: <RootLayout />,
+		errorElement: <ErrorPage />,
+		children: [
+				{
 		path: '/',
 		element: <Home />,
 		errorElement: <ErrorPage />,
@@ -14,6 +20,9 @@ const router = createBrowserRouter([
 		element: <Profile />,
 		errorElement: <ErrorPage />,
 	},
+		]
+	},
+
 ])
 
 const App = () => {

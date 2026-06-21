@@ -1,22 +1,30 @@
 @import "tailwindcss";
-@plugin "daisyui";
+@plugin "daisyui" {
+  themes: dark --default, light --preferslight;
+}
 
 @theme {
-  --color-background: #0b141c;
-  --color-surface: #182028;
-  --color-outline: #30363d;
+  --color-base: #0b141c; /*Cor de fundo de todas as páginas. */
+  --color-surface: #182028; /* Usada para cards de perfil, listagem de repositórios e caixas agrupadoras. */
+  --color-bright: #313a43; /* Para estados de hover em elementos de lista ou foco em inputs. */
+  --color-outline: #30363d; /* Para linhas de separação e grades. */
   --color-outline-variant: #414752;
-  --color-primary: #58a6ff;
-  --color-secondary: #67df70;
+  --color-primary: #a2c9ff;
+  --color-primary-variant: #58a6ff;
+  --color-secondary: #27a640;
   --color-tertiary: #fabc45;
+  --color-success: #67df70;
+  --color-error: #93000a;
+  --color-main: #dae3ee; /* Usado para títulos e textos principais */
+  --color-muted: #c0c7d4; /* Usado para biografias, datas e contadores secundários. */
 
   --font-sans: 'Geist', system-ui, sans-serif;
   --font-mono: 'Geist Mono', ui-monospace, monospace;
 }
 
 body {
-  background-color: #0b141c;
-  color: #e6edf3;
+  background-color: var(--color-base);
+  color: var(--color-text-main);
   margin: 0;
 }
 

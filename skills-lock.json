@@ -13,6 +13,18 @@
       "skillPath": "skills/copywriting/SKILL.md",
       "computedHash": "20663e361c3b6767e1318de69111b75edc1fb19ded6369cffca677b8bd0c8696"
     },
+    "create-readme": {
+      "source": "github/awesome-copilot",
+      "sourceType": "github",
+      "skillPath": "skills/create-readme/SKILL.md",
+      "computedHash": "d0ece1b2164ce1376e4ab6e98d6ac079df3a2a94f5f02224362b6a1ce2516ae9"
+    },
+    "daisyui": {
+      "source": "saadeghi/daisyui",
+      "sourceType": "github",
+      "skillPath": "skills/daisyui/SKILL.md",
+      "computedHash": "64b0150dfa629289f8f34734a73ecac468aa3713d03e8705709adef6858d0c4e"
+    },
     "frontend-design": {
       "source": "anthropics/skills",
       "sourceType": "github",

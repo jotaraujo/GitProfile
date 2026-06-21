@@ -5,7 +5,7 @@ import type { UsernameInput } from '../validations/userSchema'
 import { useNavigate } from 'react-router-dom'
 
 const Home = () => {
-  const navigate = useNavigate()
+	const navigate = useNavigate()
 
 	const {
 		register,
@@ -19,26 +19,31 @@ const Home = () => {
 		navigate(`/profile/${data.username}`)
 	}
 	return (
-		<form onSubmit={handleSubmit(onSubmit)} className='flex flex-col gap-4'>
-			<div className='flex flex-col gap-1'>
-				<label className='text-sm font-medium'>Username</label>
-				<input
-					{...register('username')}
-					type='text'
-					placeholder='Digite seu username'
-					className='border p-2 rounded'
-				/>
-				{errors.username && (
-					<span className='text-red-500 text-xs'>
-						{errors.username.message}
-					</span>
-				)}
-			</div>
+		<div className='min-h-screen w-full flex items-center justify-center bg-background'>
+			<form
+				onSubmit={handleSubmit(onSubmit)}
+				className='flex flex-col items-center w-3/4 py-10 gap-4 bg-surface rounded'
+			>
+				<div className='flex flex-col max-w-md w-full px-4 items-center gap-1'>
+					<label className='text-sm font-medium'>Username</label>
+					<input
+						{...register('username')}
+						type='text'
+						placeholder='Digite seu username'
+						className='input w-full'
+					/>
+					{errors.username && (
+						<span className='text-red-500 text-xs'>
+							{errors.username.message}
+						</span>
+					)}
+				</div>
 
-			<button type='submit' className='bg-blue-500 text-white p-2 rounded cursor-pointer'>
-				Buscar
-			</button>
-		</form>
+				<button type='submit' className='btn rounded-full max-w-md w-full'>
+					Buscar
+				</button>
+			</form>
+		</div>
 	)
 }
 
