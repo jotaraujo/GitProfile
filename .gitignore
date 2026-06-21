@@ -15,11 +15,10 @@ dist-ssr
 PRD-GitProfile.md
 Prompt.md
 DESIGN_SYSTEM.md
+.agents/
+.vscode/
 
 # Editor directories and files
-.vscode/*
-!.vscode/extensions.json
-!.vscode/settings.json
 .idea
 .DS_Store
 *.suo
