@@ -1,19 +1,9 @@
-interface User {
-  login: string,
-  name: string | null,
-  avatar_url: string,
-  bio: string | null,
-  location: string | null,
-  followers: number,
-  following: number,
-  public_gists: number,
-  company: string | null,
-  html_url: string,
-  created_at: string
-}
+import type { User } from '../types/github'
+
+const API_URL = 'https://api.github.com/users'
 
 export const userSearch = async (username: string): Promise<User> => {
-	const response = await fetch(`https://api.github.com/users/${username}`)
+	const response = await fetch(`${API_URL}/${username}`)
 
 	if (!response.ok) {
 		if (response.status === 404) {

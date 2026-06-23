@@ -22,7 +22,7 @@ const Home = () => {
 		<div className='min-h-screen w-full flex items-center justify-center bg-background'>
 			<form
 				onSubmit={handleSubmit(onSubmit)}
-				className='flex flex-col items-center w-3/4 py-10 gap-4 bg-surface rounded'
+				className='flex flex-col items-center w-3/4 py-10 gap-4 border border-outline bg-surface rounded'
 			>
 				<div className='flex flex-col max-w-md w-full px-4 items-center gap-1'>
 					<label className='text-sm font-medium'>Username</label>
