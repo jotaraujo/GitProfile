@@ -4,7 +4,7 @@ import logo from '../../assets/logo.png'
 
 const Header = () => {
 	return (
-		<header className='navbar bg-surface border-b border-outline'>
+		<header className='navbar bg-surface border-b border-outline sticky top-0 z-50'>
 			<div className='navbar-start px-6'>
 				<Link to='/' className='flex items-center gap-2'>
 					<img src={logo} alt='Logo' className='w-8 h-8 rounded-full' />
