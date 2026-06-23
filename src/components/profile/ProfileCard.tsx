@@ -48,7 +48,7 @@ const ProfileCard = ({ user }: ProfileCardProps) => {
 			</div>
 			{user.location && (
 				<>
-					<p className='flex gap-2 text-sm text-muted'>
+					<p className='flex gap-2 text-sm text-muted mb-4'>
 						<MapPin size={18} />
 						{user.location}
 					</p>
@@ -56,7 +56,7 @@ const ProfileCard = ({ user }: ProfileCardProps) => {
 			)}
 			{user.company && (
 				<>
-					<p className='flex gap-2 text-sm'>
+					<p className='flex gap-2 text-sm text-muted'>
 						<Building2 size={18} />
 						{user.company}
 					</p>
