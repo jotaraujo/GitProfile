@@ -15,6 +15,7 @@ dist-ssr
 PRD-GitProfile.md
 Prompt.md
 DESIGN_SYSTEM.md
+src/docs/
 .agents/
 .vscode/
 
