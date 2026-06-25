@@ -17,7 +17,7 @@ const Profile = () => {
 
 	if (data) {
 		return (
-			<div>
+			<div className='grid h-[calc(100svh-64px)] grid-cols-[400px_1fr_1fr] grid-rows-[auto_1fr] overflow-hidden'>
 				<ProfileCard user={data} />
 			</div>
 		)

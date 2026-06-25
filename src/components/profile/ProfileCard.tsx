@@ -1,8 +1,10 @@
+import { useState } from 'react'
 import type { User } from '../../types/github'
 import { MapPin, Building2, Users } from 'lucide-react'
 
 interface ProfileCardProps {
 	user: User
+	isRecruiter?: boolean
 }
 
 const date = (data: string) => {
@@ -16,53 +18,122 @@ const date = (data: string) => {
 	return formatedDate
 }
 
-const ProfileCard = ({ user }: ProfileCardProps) => {
+const ProfileCard = ({ user, isRecruiter = true }: ProfileCardProps) => {
+	const [isFlipped, setIsFlipped] = useState(false)
+	const [status, setStatus] = useState('pendente')
+	const [notes, setNotes] = useState('')
+
 	return (
-		<div
-			className='bg-surface flex items-start flex-col m-8 p-6 max-w-md h-full rounded-lg border
-    border-outline'
-		>
-			<div className='avatar'>
-				<div className='rounded-md border border-outline-variant'>
-					<img src={user.avatar_url} alt='Foto do usuário' />
+		<>
+			<div className='flip-container m-8 max-w-md'>
+				<div className={`flip-inner ${isFlipped ? 'flipped' : ''}`}>
+					<div className='flip-front bg-surface flex flex-col items-start w-full p-6 rounded-lg border border-outline'>
+						<div className='avatar'>
+							<div className='rounded-md border border-outline-variant'>
+								<img src={user.avatar_url} alt='Foto do usuário' />
+							</div>
+						</div>
+						<h1 className='text-main font-sans text-2xl font-bold mt-4 mb-2'>
+							{user.name}
+						</h1>
+						<h2 className='text-primary font-mono text-sm mb-3'>
+							@{user.login}
+						</h2>
+						<p className='text-muted text-xs mb-4'>
+							Membro desde {date(user.created_at)}
+						</p>
+						<p className='text-muted text-sm leading-relaxed mb-4'>
+							{user.bio}
+						</p>
+						<button className='btn btn-outline w-full mb-4'>Follow</button>
+						<div className='flex gap-3 border-b-2 border-outline mb-4 py-4 w-full'>
+							<p className='flex items-center gap-2 text-sm'>
+								<Users size={18} />
+								<span className='font-bold'>{user.followers}</span> followers
+							</p>
+							<span className='text-sm px-3'>•</span>
+							<p className='flex items-center gap-2 text-sm'>
+								<span className='font-bold'>{user.following}</span> following
+							</p>
+						</div>
+						{user.location && (
+							<>
+								<p className='flex gap-2 text-sm text-muted mb-4'>
+									<MapPin size={18} />
+									{user.location}
+								</p>
+							</>
+						)}
+						{user.company && (
+							<>
+								<p className='flex gap-2 text-sm text-muted'>
+									<Building2 size={18} />
+									{user.company}
+								</p>
+							</>
+						)}
+						{isRecruiter && (
+							<button
+								className='btn btn-outline w-full mt-4'
+								onClick={() => setIsFlipped(true)}
+							>
+								Anotações de Triagem
+							</button>
+						)}
+					</div>
+					{isRecruiter && (
+						<div className='flip-back bg-surface flex flex-col items-start w-full p-6 rounded-lg border border-outline overflow-y-auto'>
+							<div className='flex flex-col flex-1'>
+								<h3 className='text-main font-sans text-xl font-semibold mb-4'>
+									Triagem do Candidato
+								</h3>
+								<div className='flex flex-col gap-4 mb-4'>
+									<p className='text-muted text-xs'>
+										Anotações privadas para o perfil de @{user.login}
+									</p>
+									{/*Form elements...*/}
+								</div>
+								<div className='flex flex-col gap-4 mb-4'>
+									<label htmlFor='status' className='text-sm text-muted'>
+										Status
+									</label>
+									<select
+										name='status'
+										id='status'
+										value={status}
+										onChange={({ target }) => setStatus(target.value)}
+										className='select select-bordered w-full bg-surface text-main border-outline rounded-[10px]'
+									>
+										<option value='pendente'>Pendente</option>
+										<option value='triagem'>Em Triagem</option>
+										<option value='aprovado'>Aprovado</option>
+										<option value='recusado'>Recusado</option>
+									</select>
+								</div>
+								<div className='flex flex-col gap-4 w-full'>
+									<label htmlFor='notes' className='text-sm text-muted'>
+										Anotações
+									</label>
+									<textarea
+										name='notes'
+										id='notes'
+										value={notes}
+										onChange={({ target }) => setNotes(target.value)}
+										className='textarea textarea-bordered w-full min-h-[100px] bg-surface text-main border-outline rounded-[10px]'
+									></textarea>
+								</div>
+							</div>
+							<button
+								className='btn btn-outline w-full mt-4'
+								onClick={() => setIsFlipped(false)}
+							>
+								Voltar ao Perfil
+							</button>
+						</div>
+					)}
 				</div>
 			</div>
-			<h1 className='text-main font-sans text-2xl font-bold mt-4 mb-2'>
-				{user.name}
-			</h1>
-			<h2 className='text-primary font-mono text-sm mb-3'>@{user.login}</h2>
-			<p className='text-muted text-xs mb-4'>
-				Membro desde {date(user.created_at)}
-			</p>
-			<p className='text-muted text-sm leading-relaxed mb-4'>{user.bio}</p>
-			<button className='btn btn-outline w-full mb-4'>Follow</button>
-			<div className='flex gap-3 border-b-2 border-outline mb-4 py-4 w-full'>
-				<p className='flex items-center gap-2 text-sm'>
-					<Users size={18} />
-					<span className='font-bold'>{user.followers}</span> followers
-				</p>
-				<span className='text-sm px-3'>•</span>
-				<p className='flex items-center gap-2 text-sm'>
-					<span className='font-bold'>{user.following}</span> following
-				</p>
-			</div>
-			{user.location && (
-				<>
-					<p className='flex gap-2 text-sm text-muted mb-4'>
-						<MapPin size={18} />
-						{user.location}
-					</p>
-				</>
-			)}
-			{user.company && (
-				<>
-					<p className='flex gap-2 text-sm text-muted'>
-						<Building2 size={18} />
-						{user.company}
-					</p>
-				</>
-			)}
-		</div>
+		</>
 	)
 }
 
