@@ -1,6 +1,6 @@
+import { MapPin, Building2, Users } from 'lucide-react'
 import { useState } from 'react'
 import type { User } from '../../types/github'
-import { MapPin, Building2, Users } from 'lucide-react'
 
 interface ProfileCardProps {
 	user: User
@@ -91,7 +91,6 @@ const ProfileCard = ({ user, isRecruiter = true }: ProfileCardProps) => {
 									<p className='text-muted text-xs'>
 										Anotações privadas para o perfil de @{user.login}
 									</p>
-									{/*Form elements...*/}
 								</div>
 								<div className='flex flex-col gap-4 mb-4'>
 									<label htmlFor='status' className='text-sm text-muted'>

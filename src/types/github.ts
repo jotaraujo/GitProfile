@@ -10,3 +10,19 @@ export interface User {
   company: string | null,
   created_at: string
 }
+
+export interface Repository {
+  id: number,
+  name: string,
+  private: boolean,
+  owner: User,
+  html_url: string,
+  description: string | null,
+  created_at: string,
+  updated_at: string,
+  size: number,
+  stargazers_count: number,
+  watchers_count: number,
+  language: string | null,
+  forks_count: number
+}
