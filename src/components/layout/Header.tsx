@@ -1,13 +1,13 @@
 import { Link } from 'react-router-dom'
 import { Bell, Plus } from 'lucide-react'
-import logo from '../../assets/logo.png'
+import Logo from '../../assets/gitprofile-logo.svg?react'
 
 const Header = () => {
 	return (
 		<header className='navbar bg-surface border-b border-outline sticky top-0 z-50'>
 			<div className='navbar-start px-6'>
 				<Link to='/' className='flex items-center gap-2'>
-					<img src={logo} alt='Logo' className='w-8 h-8 rounded-full' />
+					<Logo className='w-8 h-8 rounded-full'/>
 					<span className='text-xl font-sans font-bold text-main'>
 						GitProfile
 					</span>
