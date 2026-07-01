@@ -18,6 +18,8 @@ DESIGN_SYSTEM.md
 src/docs/
 .agents/
 .vscode/
+.impeccable/
+PRODUCT.md
 
 # Editor directories and files
 .idea

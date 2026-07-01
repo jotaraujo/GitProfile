@@ -49,7 +49,10 @@ const Home = () => {
 	return (
 		<div className='bg-base relative min-h-[calc(100svh-64px)] w-full flex flex-col items-center justify-center p-6 gap-12 overflow-hidden'>
 			{/* BLOB DECORATIVO */}
-			{/* BACKGROUND DINÂMICO */}
+			{/*
+  			absolute + inset-0: estica o background para ocupar 100% do pai
+  			pointer-events-none: permite clicar nos botões que estão atrás do background 
+			*/}
 			<div className='absolute inset-0 z-0 pointer-events-none'>
 				{/* Gradiente radial no centro */}
 				<div className='absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] md:w-[800px] h-[600px] md:h-[800px] rounded-full bg-primary-variant/5 blur-[120px] mix-blend-screen' />
@@ -68,7 +71,7 @@ const Home = () => {
 				<div className='text-center max-w-xl flex flex-col gap-3'>
 					<div className='flex items-center justify-center gap-3 md: gap-4'>
 						<Logo className='w-15 h-15' />
-						<h1 className='text-4xl md:text:5xl font-sans font-bold tracking-tight bg-gradient-to-r from-primary to-main bg-clip-text text-transparent'>
+						<h1 className='text-4xl md:text-5xl font-sans font-bold tracking-tight bg-gradient-to-r from-primary to-main bg-clip-text text-transparent'>
 							Explore Perfis do GitHub
 						</h1>
 					</div>
@@ -83,6 +86,7 @@ const Home = () => {
 				>
 					<div className='join w-full border border-outline rounded-lg overflow-hidden focus-within:border-primary-variant transition-colors duration-200'>
 						<div className='relative join-item flex-1 flex items-center h-12'>
+							{/* sr-only: apenas para leitores de tela, ou seja, fica escondido visualmente mas é lido por leitores de tela */}
 							<label htmlFor='username' className='sr-only'>
 								Username do GitHub
 							</label>
@@ -101,10 +105,10 @@ const Home = () => {
 								<Search size={18} aria-hidden='true' />
 							</span>
 							<div className='absolute right-4 flex items-center gap-1 pointer-events-none select-none hidden sm:flex'>
-								<kbd className='kbd kbd-sm bg-[#222b33] border border-outline-variant text-muted text-xs font-mono px-1.5 py-0.5 rounded'>
+								<kbd className='kbd kbd-sm bg-bright border border-outline-variant text-muted text-xs font-mono px-1.5 py-0.5 rounded'>
 									Ctrl
 								</kbd>
-								<kbd className='kbd kbd-sm bg-[#222b33] border border-outline-variant text-muted text-xs font-mono px-1.5 py-0.5 rounded'>
+								<kbd className='kbd kbd-sm bg-bright border border-outline-variant text-muted text-xs font-mono px-1.5 py-0.5 rounded'>
 									K
 								</kbd>
 							</div>
@@ -137,14 +141,14 @@ const Home = () => {
 								key={sug.username}
 								type='button'
 								onClick={() => navigate(`/profile/${sug.username}`)}
-								className='group flex items-center gap-2 px-3 py-1.5 rounded-full bg-[#58a6ff]/10 border border-[#58a6ff]/20 hover:bg-[#58a6ff]/20 transition-all duration-200 cursor-pointer'
+								className='group flex items-center gap-2 px-3 py-1.5 rounded-full bg-primary-variant/10 border border-primary-variant/20 hover:bg-primary-variant/20 transition-all duration-200 cursor-pointer'
 							>
 								<img
 									src={sug.avatarUrl}
 									alt={`Avatar de ${sug.username}`}
 									className='w-5 h-5 rounded-full object-cover border border-outline-variant'
 								/>
-								<span className='text-xs font-sans text-[#a2c9ff] group-hover:text-main transition-colors'>
+								<span className='text-xs font-sans text-primary group-hover:text-main transition-colors'>
 									@{sug.username}
 								</span>
 							</button>
