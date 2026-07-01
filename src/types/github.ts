@@ -26,3 +26,16 @@ export interface Repository {
   language: string | null,
   forks_count: number
 }
+
+export interface SearchHistoryItem {
+  username: string,
+  avatarUrl: string,
+  searchedAt: string, // Para saber quando foi buscado e definir a ordem do histórico
+}
+
+export interface SearchHistoryState {
+  history: SearchHistoryItem[],
+  addSearch(username: string, avatarUrl: string): void,
+  removeSearch(username: string): void,
+  clearHistory(): void
+}

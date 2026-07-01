@@ -1,11 +1,12 @@
-import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { userSchema } from '../validations/userSchema'
-import type { UsernameInput } from '../validations/userSchema'
+import { Search, Trash2 } from 'lucide-react'
+import { useEffect, useRef, useState } from 'react'
+import { useForm } from 'react-hook-form'
 import { useNavigate } from 'react-router-dom'
-import { Search } from 'lucide-react'
 import Logo from '../assets/gitprofile-logo.svg?react'
-import { useEffect, useRef } from 'react'
+import { useSearchHistoryStore } from '../store/useSearchHistoryStore'
+import type { UsernameInput } from '../validations/userSchema'
+import { userSchema } from '../validations/userSchema'
 
 const suggestions = [
 	{ username: 'torvalds', avatarUrl: 'https://github.com/torvalds.png' },
@@ -17,6 +18,8 @@ const suggestions = [
 ]
 
 const Home = () => {
+	const { history, clearHistory, removeSearch } = useSearchHistoryStore()
+	const [isFocused, setIsFocused] = useState(false)
 	const navigate = useNavigate()
 
 	const inputRef = useRef<HTMLInputElement | null>(null)
@@ -84,42 +87,96 @@ const Home = () => {
 					onSubmit={handleSubmit(onSubmit)}
 					className='w-full max-w-2xl flex flex-col gap-2'
 				>
-					<div className='join w-full border border-outline rounded-lg overflow-hidden focus-within:border-primary-variant transition-colors duration-200'>
-						<div className='relative join-item flex-1 flex items-center h-12'>
-							{/* sr-only: apenas para leitores de tela, ou seja, fica escondido visualmente mas é lido por leitores de tela */}
-							<label htmlFor='username' className='sr-only'>
-								Username do GitHub
-							</label>
-							<input
-								{...register('username')}
-								ref={(e) => {
-									register('username').ref(e)
-									inputRef.current = e
-								}}
-								id='username'
-								type='text'
-								placeholder='Digite o username do GitHub (ex: torvalds)...'
-								className='input w-full bg-surface text-main border-none pl-12 focus:outline-none rounded-none h-12'
-							/>
-							<span className='absolute left-4 text-muted pointer-events-none'>
-								<Search size={18} aria-hidden='true' />
-							</span>
-							<div className='absolute right-4 flex items-center gap-1 pointer-events-none select-none hidden sm:flex'>
-								<kbd className='kbd kbd-sm bg-bright border border-outline-variant text-muted text-xs font-mono px-1.5 py-0.5 rounded'>
-									Ctrl
-								</kbd>
-								<kbd className='kbd kbd-sm bg-bright border border-outline-variant text-muted text-xs font-mono px-1.5 py-0.5 rounded'>
-									K
-								</kbd>
+					<div className='relative w-full max-w-2xl'>
+						<div className='join w-full border border-outline rounded-lg overflow-hidden focus-within:border-primary-variant transition-colors duration-200'>
+							<div className='relative join-item flex-1 flex items-center h-12'>
+								{/* sr-only: apenas para leitores de tela, ou seja, fica escondido visualmente mas é lido por leitores de tela */}
+								<label htmlFor='username' className='sr-only'>
+									Username do GitHub
+								</label>
+								<input
+									{...register('username')}
+									ref={(e) => {
+										register('username').ref(e)
+										inputRef.current = e
+									}}
+									id='username'
+									type='text'
+									placeholder='Digite o nome do usuário do GitHub (ex: torvalds)...'
+									autoComplete='off'
+									onFocus={() => setIsFocused(true)}
+									onBlur={() => setTimeout(() => setIsFocused(false), 200)}
+									className='input w-full bg-surface text-main border-none pl-12 focus:outline-none rounded-none h-12'
+								/>
+								<span className='absolute left-4 text-muted pointer-events-none'>
+									<Search size={18} aria-hidden='true' />
+								</span>
+								<div className='absolute right-4 flex items-center gap-1 pointer-events-none select-none hidden sm:flex'>
+									<kbd className='kbd kbd-sm bg-bright border border-outline-variant text-muted text-xs font-mono px-1.5 py-0.5 rounded'>
+										Ctrl
+									</kbd>
+									<kbd className='kbd kbd-sm bg-bright border border-outline-variant text-muted text-xs font-mono px-1.5 py-0.5 rounded'>
+										K
+									</kbd>
+								</div>
 							</div>
-						</div>
 
-						<button
-							type='submit'
-							className='btn btn-primary join-item px-8 rounded-none border-none h-12'
-						>
-							Buscar
-						</button>
+							<button
+								type='submit'
+								className='btn btn-primary join-item px-8 rounded-none border-none h-12'
+							>
+								Buscar
+							</button>
+						</div>
+						{/* Dropdown de histórico de buscas */}
+						{isFocused && history.length > 0 && (
+							<div className='absolute top-full left-0 w-full mt-2 bg-surface border border-outline rounded-lg shadow-xl z-20 overflow-hidden flex flex-col'>
+								{/* Cabeçalho do Dropdown */}
+								<div className='flex items-center justify-between px-4 py-2 border-b border-outline bg-base/50'>
+									<span className='text-[10px] font-mono text-muted uppercase tracking-wider'>
+										Buscas Recentes
+									</span>
+									<button
+										type='button'
+										className='text-[10px] font-mono text-primary hover: text-main transition-colors'
+										onClick={() => clearHistory()}
+									>
+										Limpar Histórico
+									</button>
+								</div>
+								{/* Aqui renderiza a lista do hitórico */}
+								<div>
+									{history.map((item) => (
+										<div
+											key={item.username}
+											className='flex items-center justify-between px-4 py-2.5 hover:bg-bright transition-colors cursor-pointer group'
+											onClick={() => navigate(`/profile/${item.username}`)}
+										>
+											<div className='flex items-center gap-3'>
+												<img
+													src={item.avatarUrl}
+													alt={`Avatar de ${item.username}`}
+													className='w-6 h-6 rounded border border-outline-variant'
+												/>
+												<span className='text-sm text-main font-mono'>
+													@{item.username}
+												</span>
+											</div>
+											<button
+												type='button'
+												onClick={(e) => {
+													e.stopPropagation()
+													removeSearch(item.username)
+												}}
+												className='text-muted hover:text-error p-1 rounded transition-colors opacity-0 group-hover:opacity-100'
+											>
+												<Trash2 size={12} className='cursor-pointer'/>
+											</button>
+										</div>
+									))}
+								</div>
+							</div>
+						)}
 					</div>
 
 					{errors.username && (

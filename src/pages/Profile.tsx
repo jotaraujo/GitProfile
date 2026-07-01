@@ -1,11 +1,12 @@
+import { GitFork, Star } from 'lucide-react'
+import { useEffect, useMemo, useRef } from 'react'
 import { useParams } from 'react-router-dom'
-import { useGithubUser } from '../hooks/useGithubUser'
 import ProfileCard from '../components/profile/ProfileCard'
 import RepositoryCard from '../components/profile/RepositoryCard'
 import { useGithubRepos } from '../hooks/useGithubRepos'
-import { useEffect, useMemo, useRef } from 'react'
-import { GitFork, Star } from 'lucide-react'
+import { useGithubUser } from '../hooks/useGithubUser'
 import { languageColors } from '../lib/Colors'
+import { useSearchHistoryStore } from '../store/useSearchHistoryStore'
 
 const Profile = () => {
 	const { username } = useParams<{ username: string }>()
@@ -18,9 +19,10 @@ const Profile = () => {
 		isFetchingNextPage,
 	} = useGithubRepos(username || '')
 	const observerRef = useRef<HTMLDivElement | null>(null)
+	const { addSearch } = useSearchHistoryStore()
 
 	const allRepos = useMemo(() => {
-		return repo?.pages.flatMap((page) => page) || [] 
+		return repo?.pages.flatMap((page) => page) || []
 	}, [repo])
 
 	const languageStats = useMemo(() => {
@@ -68,6 +70,12 @@ const Profile = () => {
 
 		return { stars, forks }
 	}, [allRepos])
+
+	useEffect(() => {
+		if (data) {
+			addSearch(data.login, data.avatar_url)
+		}
+	}, [data, addSearch])
 
 	useEffect(() => {
 		const sentinel = observerRef.current
