@@ -1,41 +1,56 @@
 export interface User {
-  login: string,
-  name: string | null,
-  avatar_url: string,
-  bio: string | null,
-  location: string | null,
-  followers: number,
-  following: number,
-  public_gists: number,
-  company: string | null,
-  created_at: string
+	login: string
+	name: string | null
+	avatar_url: string
+	bio: string | null
+	location: string | null
+	followers: number
+	following: number
+	public_gists: number
+	company: string | null
+	created_at: string
 }
 
 export interface Repository {
-  id: number,
-  name: string,
-  private: boolean,
-  owner: User,
-  html_url: string,
-  description: string | null,
-  created_at: string,
-  updated_at: string,
-  size: number,
-  stargazers_count: number,
-  watchers_count: number,
-  language: string | null,
-  forks_count: number
+	id: number
+	name: string
+	private: boolean
+	owner: User
+	html_url: string
+	description: string | null
+	created_at: string
+	updated_at: string
+	size: number
+	stargazers_count: number
+	watchers_count: number
+	language: string | null
+	forks_count: number
 }
 
 export interface SearchHistoryItem {
-  username: string,
-  avatarUrl: string,
-  searchedAt: string, // Para saber quando foi buscado e definir a ordem do histórico
+	username: string
+	avatarUrl: string
+	searchedAt: string // Para saber quando foi buscado e definir a ordem do histórico
 }
 
 export interface SearchHistoryState {
-  history: SearchHistoryItem[],
-  addSearch(username: string, avatarUrl: string): void,
-  removeSearch(username: string): void,
-  clearHistory(): void
+	history: SearchHistoryItem[]
+	addSearch(username: string, avatarUrl: string): void
+	removeSearch(username: string): void
+	clearHistory(): void
+}
+
+export interface PinnedProfile {
+	login: string
+	name: string | null
+	avatar_url: string
+	bio: string | null
+	pinnedAt: string
+}
+
+export interface PinnedProfilesState {
+	pinned: PinnedProfile[]
+	pinProfile(profile: PinnedProfile): void
+	unpinProfile(login: string): void
+	isPinned(login: string): boolean
 }

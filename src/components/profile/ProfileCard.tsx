@@ -1,5 +1,6 @@
-import { MapPin, Building2, Users } from 'lucide-react'
+import { Building2, MapPin, Pin, Users } from 'lucide-react'
 import { useState } from 'react'
+import { usePinnedProfileStore } from '../../store/usePinnedProfileStore'
 import type { User } from '../../types/github'
 
 interface ProfileCardProps {
@@ -19,9 +20,26 @@ const date = (data: string) => {
 }
 
 const ProfileCard = ({ user, isRecruiter = true }: ProfileCardProps) => {
+	const { isPinned, pinProfile, unpinProfile } = usePinnedProfileStore()
 	const [isFlipped, setIsFlipped] = useState(false)
 	const [status, setStatus] = useState('pendente')
 	const [notes, setNotes] = useState('')
+
+	const pinned = isPinned(user.login)
+
+	const handlePinToggle = () => {
+		if (pinned) {
+			unpinProfile(user.login)
+		} else {
+			pinProfile({
+				login: user.login,
+				name: user.name,
+				avatar_url: user.avatar_url,
+				bio: user.bio,
+				pinnedAt: new Date().toISOString(),
+			})
+		}
+	}
 
 	return (
 		<>
@@ -33,9 +51,20 @@ const ProfileCard = ({ user, isRecruiter = true }: ProfileCardProps) => {
 								<img src={user.avatar_url} alt='Foto do usuário' />
 							</div>
 						</div>
-						<h1 className='text-main font-sans text-2xl font-bold mt-4 mb-2'>
-							{user.name}
-						</h1>
+						<div className='flex items-center gap-4'>
+							<h1 className='text-main font-sans text-2xl font-bold mt-4 mb-2'>
+								{user.name}
+							</h1>
+							<button
+								type='button'
+								onClick={handlePinToggle}
+								className={`mt-2 p-2 rounded-lg border transition-all duration-200 cursor-pointer ${pinned ? 'bg-primary-variant/20 border-primary-variant text-primary-variant' : 'bg-transparent border-outline hover:bg-bright text-muted hover:text-main'} `}
+								title={pinned ? 'Desfixar perfil' : 'Fixar perfil'}
+								aria-pressed={pinned}
+							>
+								<Pin size={18} className={pinned ? 'fill-current' : ''} />
+							</button>
+						</div>
 						<h2 className='text-primary font-mono text-sm mb-3'>
 							@{user.login}
 						</h2>

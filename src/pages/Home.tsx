@@ -4,23 +4,26 @@ import { useEffect, useRef, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { useNavigate } from 'react-router-dom'
 import Logo from '../assets/gitprofile-logo.svg?react'
+import { usePinnedProfileStore } from '../store/usePinnedProfileStore'
 import { useSearchHistoryStore } from '../store/useSearchHistoryStore'
 import type { UsernameInput } from '../validations/userSchema'
 import { userSchema } from '../validations/userSchema'
 
 const suggestions = [
-	{ username: 'torvalds', avatarUrl: 'https://github.com/torvalds.png' },
-	{ username: 'gaeron', avatarUrl: 'https://github.com/gaeron.png' },
-	{
-		username: 'sindresorhus',
-		avatarUrl: 'https://github.com/sindresorhus.png',
-	},
+	{ login: 'torvalds', avatar_url: 'https://github.com/torvalds.png' },
+	{ login: 'gaeron', avatar_url: 'https://github.com/gaeron.png' },
+	{ login: 'sindresorhus', avatar_url: 'https://github.com/sindresorhus.png' },
 ]
 
 const Home = () => {
 	const { history, clearHistory, removeSearch } = useSearchHistoryStore()
 	const [isFocused, setIsFocused] = useState(false)
 	const navigate = useNavigate()
+	const pinned = usePinnedProfileStore((state) => state.pinned)
+
+	const hasPinned = pinned.length > 0
+	const displayTitle = hasPinned ? 'Perfis Fixados' : 'Perfis Recomendados'
+	const displayList = hasPinned ? pinned : suggestions
 
 	const inputRef = useRef<HTMLInputElement | null>(null)
 
@@ -87,7 +90,7 @@ const Home = () => {
 					onSubmit={handleSubmit(onSubmit)}
 					className='w-full max-w-2xl flex flex-col gap-2'
 				>
-					<div className='relative w-full max-w-2xl'>
+					<div className='relative'>
 						<div className='join w-full border border-outline rounded-lg overflow-hidden focus-within:border-primary-variant transition-colors duration-200'>
 							<div className='relative join-item flex-1 flex items-center h-12'>
 								{/* sr-only: apenas para leitores de tela, ou seja, fica escondido visualmente mas é lido por leitores de tela */}
@@ -138,7 +141,7 @@ const Home = () => {
 									</span>
 									<button
 										type='button'
-										className='text-[10px] font-mono text-primary hover: text-main transition-colors'
+										className='text-[10px] font-mono text-primary hover: text-main transition-colors cursor-pointer'
 										onClick={() => clearHistory()}
 									>
 										Limpar Histórico
@@ -170,7 +173,7 @@ const Home = () => {
 												}}
 												className='text-muted hover:text-error p-1 rounded transition-colors opacity-0 group-hover:opacity-100'
 											>
-												<Trash2 size={12} className='cursor-pointer'/>
+												<Trash2 size={12} className='cursor-pointer' />
 											</button>
 										</div>
 									))}
@@ -189,24 +192,24 @@ const Home = () => {
 				{/* SEÇÃO DE RECOMENDAÇÕES */}
 				<div className='w-full max-w-xl flex items-center gap-3 mt-2'>
 					<span className='text-muted font-mono text-xs tracking_wider uppercase'>
-						Perfis Recomendados:
+						{displayTitle}:
 					</span>
 
 					<div className='flex flex-wrap gap-2'>
-						{suggestions.map((sug) => (
+						{displayList.map((pin) => (
 							<button
-								key={sug.username}
+								key={pin.login}
 								type='button'
-								onClick={() => navigate(`/profile/${sug.username}`)}
+								onClick={() => navigate(`/profile/${pin.login}`)}
 								className='group flex items-center gap-2 px-3 py-1.5 rounded-full bg-primary-variant/10 border border-primary-variant/20 hover:bg-primary-variant/20 transition-all duration-200 cursor-pointer'
 							>
 								<img
-									src={sug.avatarUrl}
-									alt={`Avatar de ${sug.username}`}
+									src={pin.avatar_url}
+									alt={`Avatar de ${pin.login}`}
 									className='w-5 h-5 rounded-full object-cover border border-outline-variant'
 								/>
 								<span className='text-xs font-sans text-primary group-hover:text-main transition-colors'>
-									@{sug.username}
+									@{pin.login}
 								</span>
 							</button>
 						))}
