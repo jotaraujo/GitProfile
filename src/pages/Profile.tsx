@@ -1,6 +1,6 @@
 import { GitFork, Star } from 'lucide-react'
 import { useEffect, useMemo, useRef } from 'react'
-import { useParams } from 'react-router-dom'
+import { useParams, useNavigate } from 'react-router-dom'
 import ProfileCard from '../components/profile/ProfileCard'
 import RepositoryCard from '../components/profile/RepositoryCard'
 import { useGithubRepos } from '../hooks/useGithubRepos'
@@ -9,8 +9,9 @@ import { languageColors } from '../lib/Colors'
 import { useSearchHistoryStore } from '../store/useSearchHistoryStore'
 
 const Profile = () => {
-	const { username } = useParams<{ username: string }>()
+	const navigate = useNavigate()
 
+	const { username } = useParams<{ username: string }>()
 	const { data, isLoading, isError, error } = useGithubUser(username || '')
 	const {
 		data: repo,
@@ -72,10 +73,13 @@ const Profile = () => {
 	}, [allRepos])
 
 	useEffect(() => {
-		if (data) {
-			addSearch(data.login, data.avatar_url)
-		}
-	}, [data, addSearch])
+		if (!data) return
+
+		addSearch(data.login, data.avatar_url)
+
+		if (username !== data.login)
+			navigate(`/profile/${data.login}`, { replace: true })
+	}, [data, username, addSearch, navigate])
 
 	useEffect(() => {
 		const sentinel = observerRef.current

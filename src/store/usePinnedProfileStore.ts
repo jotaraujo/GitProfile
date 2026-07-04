@@ -12,7 +12,7 @@ export const usePinnedProfileStore = create<PinnedProfilesState>()(
 					const filtered = state.pinned.filter((p) => p.login !== profile.login)
 
 					return {
-						pinned: [profile, ...filtered].slice(0, 3),
+						pinned: [profile, ...filtered].slice(0, 4),
 					}
 				}),
 

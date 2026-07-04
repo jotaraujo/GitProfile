@@ -3,7 +3,7 @@ import { Search, Trash2 } from 'lucide-react'
 import { useEffect, useRef, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { useNavigate } from 'react-router-dom'
-import Logo from '../assets/gitprofile-logo.svg?react'
+import Logo from '../assets/logo.svg?react'
 import { usePinnedProfileStore } from '../store/usePinnedProfileStore'
 import { useSearchHistoryStore } from '../store/useSearchHistoryStore'
 import type { UsernameInput } from '../validations/userSchema'
@@ -13,11 +13,16 @@ const suggestions = [
 	{ login: 'torvalds', avatar_url: 'https://github.com/torvalds.png' },
 	{ login: 'gaeron', avatar_url: 'https://github.com/gaeron.png' },
 	{ login: 'sindresorhus', avatar_url: 'https://github.com/sindresorhus.png' },
+	{
+		login: 'Fernanda-Kipper',
+		avatar_url: 'https://github.com/Fernanda-Kipper.png',
+	},
 ]
 
 const Home = () => {
 	const { history, clearHistory, removeSearch } = useSearchHistoryStore()
 	const [isFocused, setIsFocused] = useState(false)
+	const [isSearchOpen, setIsSearchOpen] = useState(false)
 	const navigate = useNavigate()
 	const pinned = usePinnedProfileStore((state) => state.pinned)
 
@@ -49,35 +54,47 @@ const Home = () => {
 		resolver: zodResolver(userSchema),
 	})
 
+	const handleInputFocus = ({ target }: React.FocusEvent<HTMLInputElement>) => {
+		if (window.innerWidth < 768) {
+			target.blur()
+			setIsSearchOpen(true)
+		} else {
+			setIsFocused(true)
+		}
+	}
+
 	const onSubmit = (data: UsernameInput) => {
-		navigate(`/profile/${data.username}`)
+		if (!data.username) return
+		const targetUser = data.username.trim()
+		const matchedPinned = pinned.find(
+			(p) => p.login.toLowerCase() === targetUser.toLowerCase(),
+		)
+		const matchedHistory = history.find(
+			(h) => h.username.toLowerCase() === targetUser.toLowerCase(),
+		)
+		const matchedSuggestion = suggestions.find(
+			(s) => s.login.toLowerCase() === targetUser.toLowerCase(),
+		)
+		const finalUser =
+			matchedPinned?.login ||
+			matchedHistory?.username ||
+			matchedSuggestion?.login ||
+			targetUser
+
+		navigate(`/profile/${finalUser}`)
 	}
 	return (
 		<div className='bg-base relative min-h-[calc(100svh-64px)] w-full flex flex-col items-center justify-center p-6 gap-12 overflow-hidden'>
-			{/* BLOB DECORATIVO */}
-			{/*
-  			absolute + inset-0: estica o background para ocupar 100% do pai
-  			pointer-events-none: permite clicar nos botões que estão atrás do background 
-			*/}
 			<div className='absolute inset-0 z-0 pointer-events-none'>
-				{/* Gradiente radial no centro */}
-				<div className='absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] md:w-[800px] h-[600px] md:h-[800px] rounded-full bg-primary-variant/5 blur-[120px] mix-blend-screen' />
-				{/* Blob superior direito */}
-				<div className='absolute top-10 right-10 w-72 h-72 rounded-full bg-primary/10 blur-[50px] animate-blob' />
-				{/* Blob inferior esquerdo */}
-				<div
-					className='absolute bottom-10 left-10 w-72 h-72 rounded-full bg-secondary/10 blur-[50px] animate-blob'
-					style={{ animationDelay: '4s' }}
-				/>
+				<div className='absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] md:w-[800px] h-[600px] md:h-[800px] rounded-full bg-primary-variant/3 blur-[120px]' />
 			</div>
-
 			{/* BLOCO PRINCIPAL */}
 			<div className='relative z-10 w-full max-w-4xl flex flex-col items-center gap-10'>
 				{/* SEÇÃO HERO */}
-				<div className='text-center max-w-xl flex flex-col gap-3'>
-					<div className='flex items-center justify-center gap-3 md: gap-4'>
-						<Logo className='w-15 h-15' />
-						<h1 className='text-4xl md:text-5xl font-sans font-bold tracking-tight bg-gradient-to-r from-primary to-main bg-clip-text text-transparent'>
+				<div className='text-center max-w-lg flex flex-col gap-4'>
+					<div className='flex flex-col md:flex-row items-center justify-center gap-3'>
+						<Logo className='w-16 h-16' />
+						<h1 className='text-3xl md:text-5xl font-sans font-bold tracking-tight text-main'>
 							Explore Perfis do GitHub
 						</h1>
 					</div>
@@ -105,9 +122,10 @@ const Home = () => {
 									}}
 									id='username'
 									type='text'
-									placeholder='Digite o nome do usuário do GitHub (ex: torvalds)...'
+									placeholder='Digite o usuário'
+									spellCheck={false}
 									autoComplete='off'
-									onFocus={() => setIsFocused(true)}
+									onFocus={handleInputFocus}
 									onBlur={() => setTimeout(() => setIsFocused(false), 200)}
 									className='input w-full bg-surface text-main border-none pl-12 focus:outline-none rounded-none h-12'
 								/>
@@ -171,7 +189,7 @@ const Home = () => {
 													e.stopPropagation()
 													removeSearch(item.username)
 												}}
-												className='text-muted hover:text-error p-1 rounded transition-colors opacity-0 group-hover:opacity-100'
+												className='text-muted hover:text-error p-1 rounded transition-colors'
 											>
 												<Trash2 size={12} className='cursor-pointer' />
 											</button>
@@ -187,35 +205,138 @@ const Home = () => {
 							{errors.username.message}
 						</span>
 					)}
+
+					{/* SEÇÃO DE RECOMENDAÇÕES */}
+					<div className='w-full max-w-2xl flex flex-col md:flex-row items-center gap-3 mt-5 md:mt-3'>
+						<span className='text-muted font-mono text-xs tracking_wider uppercase'>
+							{displayTitle}:
+						</span>
+						<div className='flex flex-wrap md:flex-nowrap justify-center md:justify-start gap-2'>
+							{displayList.map((pin) => (
+								<button
+									key={pin.login}
+									type='button'
+									onClick={() => navigate(`/profile/${pin.login}`)}
+									className='group flex items-center gap-2 px-1 md:px-2 py-1 md:py-2 rounded-full bg-primary-variant/10 border border-primary-variant/20 hover:bg-primary-variant/20 transition-all duration-200 cursor-pointer'
+								>
+									<img
+										src={pin.avatar_url}
+										alt={`Avatar de ${pin.login}`}
+										className='w-6 h-6 rounded-full object-cover border border-outline-variant'
+									/>
+									<span className='text-xs font-sans text-primary group-hover:text-main transition-colors'>
+										@{pin.login}
+									</span>
+								</button>
+							))}
+						</div>
+					</div>
 				</form>
-
-				{/* SEÇÃO DE RECOMENDAÇÕES */}
-				<div className='w-full max-w-xl flex items-center gap-3 mt-2'>
-					<span className='text-muted font-mono text-xs tracking_wider uppercase'>
-						{displayTitle}:
-					</span>
-
-					<div className='flex flex-wrap gap-2'>
-						{displayList.map((pin) => (
-							<button
-								key={pin.login}
-								type='button'
-								onClick={() => navigate(`/profile/${pin.login}`)}
-								className='group flex items-center gap-2 px-3 py-1.5 rounded-full bg-primary-variant/10 border border-primary-variant/20 hover:bg-primary-variant/20 transition-all duration-200 cursor-pointer'
-							>
-								<img
-									src={pin.avatar_url}
-									alt={`Avatar de ${pin.login}`}
-									className='w-5 h-5 rounded-full object-cover border border-outline-variant'
+			</div>
+			{isSearchOpen && (
+				<div className='fixed inset-0 z-50 bg-base flex flex-col pt-16 px-6 pb-6 gap-6 md:hidden overflow-hidden'>
+					{/* Cabeçalho da busca */}
+					<div className='flex items-center gap-2 w-full'>
+						<form onSubmit={handleSubmit(onSubmit)} className='flex-1'>
+							<div className='relative w-full'>
+								<input
+									{...register('username')}
+									type='text'
+									placeholder='Digite o usuário'
+									autoFocus
+									spellCheck={false}
+									autoComplete='off'
+									className='input w-full bg-surface text-main border border-outline pl-12 pr-4 focus:outline-none focus:border-primary-variant rounded-lg h-12'
 								/>
-								<span className='text-xs font-sans text-primary group-hover:text-main transition-colors'>
-									@{pin.login}
+								<span className='absolute left-4 top-1/2 -translate-y-1/2 text-muted pointer-events-none'>
+									<Search size={18} aria-hidden='true' />
 								</span>
-							</button>
-						))}
+							</div>
+						</form>
+						<button
+							type='button'
+							onClick={() => setIsSearchOpen(false)}
+							className='btn btn-ghost btn-sm text-main h-12 hover:bg-primary'>
+							Voltar
+						</button>
+					</div>
+					<div className='flex flex-col gap-6 mt-4 w-full'>
+						{/* SEÇÃO HISTÓRICO MOBILE */}
+						{history.length > 0 && (
+							<div className='w-full flex flex-col gap-3'>
+								<div className='flex items-center justify-between'>
+									<span className='text-muted font-mono text-xs tracking-wider uppercase'>
+										Buscas Recentes
+									</span>
+									<button
+										type='button'
+										onClick={() => clearHistory()}
+										className='text-[10px] font-mono text-primary'
+									>
+										Limpar Histórico
+									</button>
+								</div>
+								<div className='flex flex-col border border-outline rounded-lg bg-surface overflow-hidden'>
+									{history.map((item) => (
+										<div
+											key={item.username}
+											className='flex items-center justify-between px-4 py-2.5'
+											onClick={() => navigate(`/profile/${item.username}`)}
+										>
+											<div className='flex items-center gap-3'>
+												<img
+													src={item.avatarUrl}
+													alt={`Avatar de ${item.username}`}
+													className='w-6 h-6 rounded border border-outline-variant'
+													width={24}
+													height={24}
+												/>
+												<span className='text-sm text-main font-mono'>
+													@{item.username}
+												</span>
+											</div>
+											<button
+												type='button'
+												onClick={(e) => {
+													e.stopPropagation()
+													removeSearch(item.username)
+												}}
+												className='text-muted'
+											>
+												<Trash2 size={12} />
+											</button>
+										</div>
+									))}
+								</div>
+							</div>
+						)}
+						<div className='w-full flex flex-col md:flex-row items-center gap-3 md:mt-3'>
+							<span className='text-muted font-mono text-xs tracking_wider uppercase'>
+								{displayTitle}:
+							</span>
+							<div className='flex flex-wrap md:flex-nowrap justify-center md:justify-start gap-2'>
+								{displayList.map((pin) => (
+									<button
+										key={pin.login}
+										type='button'
+										onClick={() => navigate(`/profile/${pin.login}`)}
+										className='group flex items-center gap-2 px-1 md:px-2 py-1 md:py-2 rounded-full bg-primary-variant/10 border border-primary-variant/20 hover:bg-primary-variant/20 transition-all duration-200 cursor-pointer'
+									>
+										<img
+											src={pin.avatar_url}
+											alt={`Avatar de ${pin.login}`}
+											className='w-6 h-6 rounded-full object-cover border border-outline-variant'
+										/>
+										<span className='text-xs font-sans text-primary group-hover:text-main transition-colors'>
+											@{pin.login}
+										</span>
+									</button>
+								))}
+							</div>
+						</div>
 					</div>
 				</div>
-			</div>
+			)}
 		</div>
 	)
 }
