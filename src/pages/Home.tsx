@@ -256,7 +256,8 @@ const Home = () => {
 						<button
 							type='button'
 							onClick={() => setIsSearchOpen(false)}
-							className='btn btn-ghost btn-sm text-main h-12 hover:bg-primary'>
+							className='btn btn-ghost btn-sm text-main h-12 hover:bg-primary'
+						>
 							Voltar
 						</button>
 					</div>
@@ -301,7 +302,7 @@ const Home = () => {
 													e.stopPropagation()
 													removeSearch(item.username)
 												}}
-												className='text-muted'
+												className='text-muted hover:text-error p-1 rounded transition-colors'
 											>
 												<Trash2 size={12} />
 											</button>
