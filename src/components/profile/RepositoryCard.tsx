@@ -13,6 +13,7 @@ import { languageColors } from '../../lib/Colors'
 import { useEffect, useState } from 'react'
 import { createPortal } from 'react-dom'
 import { useRepoContents } from '../../hooks/useRepoContents'
+import { useRepoFileContent } from '../../hooks/useRepoFileContent'
 
 interface RepositoryCardProps {
 	repository: Repository
@@ -20,6 +21,8 @@ interface RepositoryCardProps {
 
 const RepositoryCard = ({ repository }: RepositoryCardProps) => {
 	const [isOpen, setIsOpen] = useState(false)
+	const [currentPath, setCurrentPath] = useState<string>('')
+	const [selectedFilePath, setSelectedFilePath] = useState<string | null>(null)
 
 	useEffect(() => {
 		if (isOpen) {
@@ -27,7 +30,13 @@ const RepositoryCard = ({ repository }: RepositoryCardProps) => {
 			document.documentElement.style.overflow = 'hidden'
 
 			const handleKeyDown = (e: KeyboardEvent) => {
-				if (e.key === 'Escape') setIsOpen(false)
+				if (e.key === 'Escape') {
+					if (selectedFilePath) {
+						setSelectedFilePath(null)
+					} else {
+						setIsOpen(false)
+					}
+				}
 			}
 			window.addEventListener('keydown', handleKeyDown)
 
@@ -36,20 +45,88 @@ const RepositoryCard = ({ repository }: RepositoryCardProps) => {
 				document.documentElement.style.overflow = 'unset'
 				window.removeEventListener('keydown', handleKeyDown)
 			}
+		} else {
+			setCurrentPath('')
+			setSelectedFilePath(null)
 		}
-	}, [isOpen])
+	}, [selectedFilePath, isOpen])
 
 	// Busca dinâmica de arquivos da raiz do repositório usando o hook customizado (só roda se o modal estiver aberto)
 	const {
 		data: contents,
 		isLoading,
 		error,
-	} = useRepoContents(repository.owner.login, repository.name, isOpen)
+	} = useRepoContents({
+		owner: repository.owner.login,
+		repo: repository.name,
+		path: currentPath,
+		isOpen,
+	})
+
+	const {
+		data: fileData,
+		isLoading: isFileLoading,
+		error: fileError,
+	} = useRepoFileContent({
+		owner: repository.owner.login,
+		repo: repository.name,
+		path: selectedFilePath,
+		enabled: !!selectedFilePath,
+	})
+
+	const handleBackClick = () => {
+		const parts = currentPath.split('/').filter(Boolean)
+		parts.pop()
+		setCurrentPath(parts.join('/'))
+	}
+
+	const pathParts = currentPath.split('/').filter(Boolean)
 
 	// Ordena diretórios (dir) para o topo e arquivos (file) para a base
 	const sortedContents = contents
 		? [...contents].sort((a, b) => b.type.localeCompare(a.type))
 		: []
+
+	const binaryExtensions = [
+		'.png',
+		'.jpg',
+		'.jpeg',
+		'.gif',
+		'.webp',
+		'.ico',
+		'.pdf',
+		'.woff',
+		'.woff2',
+		'.ttf',
+		'.otf',
+		'.zip',
+		'.tar',
+		'.gz',
+		'.mp4',
+	]
+	const isBinary = selectedFilePath
+		? binaryExtensions.some((ext) =>
+				selectedFilePath.toLowerCase().endsWith(ext),
+			)
+		: false
+	const isTooLarge = fileData ? fileData.size > 1024 * 1024 : false
+	const decodeBase64 = (base64Str: string) => {
+		try {
+			const cleanedStr = base64Str.replace(/\s/g, '') //Limpa quebras de linha enviadas pela API
+			return decodeURIComponent(
+				atob(cleanedStr)
+					.split('')
+					.map((c) => '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2))
+					.join(''),
+			)
+		} catch (error) {
+			return atob(base64Str) //Fallback caso a string não esteja em formato UTF-8 compatível
+		}
+	}
+	const codeContent =
+		fileData?.content && !isBinary && !isTooLarge
+			? decodeBase64(fileData.content)
+			: ''
 
 	return (
 		<>
@@ -196,10 +273,40 @@ const RepositoryCard = ({ repository }: RepositoryCardProps) => {
 								</div>
 
 								{/* COLUNA DIREITA: Explorador de Pastas */}
-								<div className="flex-grow flex-shrink flex flex-col gap-2 min-h-0">
+								<div className="flex flex-col flex-grow gap-2 flex-shrink-0 min-h-0">
 									<span className="text-xs font-semibold text-muted uppercase tracking-wider block mb-1">
 										Estrutura do Projeto
 									</span>
+
+									<div className="flex items-center gap-1.5 text-xs text-muted font-mono overflow-x-auto whitespace-nowrap py-1 flex-nowrap scrollbar-none">
+										<button
+											type="button"
+											onClick={() => setCurrentPath('')}
+											className="hover:text-main hover:underline cursor-pointer flex-shrink-0"
+										>
+											Root
+										</button>
+
+										{pathParts.map((part, index) => {
+											const partPath = pathParts.slice(0, index + 1).join('/')
+
+											return (
+												<span
+													key={partPath}
+													className="flex items-center gap-1.5 flex-shrink-0"
+												>
+													<span className="text-outline-variant">/</span>
+													<button
+														type="button"
+														onClick={() => setCurrentPath(partPath)}
+														className="hover:text-main hover:underline cursor-pointer"
+													>
+														{part}
+													</button>
+												</span>
+											)
+										})}
+									</div>
 
 									{/* Loading State */}
 									{isLoading && (
@@ -220,10 +327,27 @@ const RepositoryCard = ({ repository }: RepositoryCardProps) => {
 									{/* Lista de Pastas e Arquivos */}
 									{!isLoading && sortedContents.length > 0 && (
 										<div className="flex flex-col border border-outline rounded-lg divide-y divide-outline bg-base overflow-y-auto max-h-[220px] md:max-h-[320px] pr-1 no-scrollbar">
+											{currentPath && (
+												<div
+													onClick={handleBackClick}
+													className="flex items-center gap-3 px-3 py-2 text-sm text-muted hover:text-main hover:bg-surface-bright transition-colors font-mono cursor-pointer"
+												>
+													<Folder size={16} className="text-muted" />
+													<span>.. (voltar)</span>
+												</div>
+											)}
 											{sortedContents.map((item) => (
 												<div
 													key={item.path}
-													className="flex items-center gap-3 px-3 py-2 text-sm text-main hover:bg-surface-bright transition-colors font-mono"
+													onClick={() => {
+														if (item.type === 'dir') {
+															setCurrentPath(item.path)
+														}
+														if (item.type === 'file') {
+															setSelectedFilePath(item.path)
+														}
+													}}
+													className="flex items-center gap-3 px-3 py-2 text-sm text-main hover:bg-surface-bright transition-colors font-mono cursor-pointer"
 												>
 													{item.type === 'dir' ? (
 														<Folder
@@ -259,6 +383,93 @@ const RepositoryCard = ({ repository }: RepositoryCardProps) => {
 									<ExternalLink size={16} />
 									Ver no GitHub
 								</a>
+							</div>
+						</div>
+					</div>,
+					document.body,
+				)}
+
+			{/* Modal Secundário: Visualizador de Código */}
+			{selectedFilePath &&
+				createPortal(
+					<div
+						className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-md p-4 transition-all duration-300"
+						onClick={() => setSelectedFilePath(null)}
+					>
+						<div
+							className="bg-[#0d1117] border border-outline rounded-xl w-full max-w-4xl max-h-[85vh] relative flex flex-col text-left ovwerflow-hidden shadow-2xl"
+							onClick={(e) => e.stopPropagation()}
+						>
+							{/* Cabeçalho Fixo */}
+							<div className="flex items-center justify-between gap-4 p-4 md:p-6 border-b border-outline flex-shrink-0">
+								<div className="flex flex-col gap-1 min-w-0">
+									<h4
+										className="text-main font-mono text-sm truncate"
+										title={selectedFilePath}
+									>
+										{selectedFilePath}
+									</h4>
+									{fileData && (
+										<span className="text-xs text-muted font-mono">
+											{(fileData.size / 1024).toFixed(1)} KB
+										</span>
+									)}
+								</div>
+								<button
+									type="button"
+									onClick={() => setSelectedFilePath(null)}
+									className="text-muted hover:tex-main cursor-pointer p-2 rounded-lg hover:bg-surface-bright flex-shrink-0"
+									aria-label="Fechar vizualizador de código"
+								>
+									<X size={20} />
+								</button>
+							</div>
+
+							{/* Conteúdo Rolável com os Estados do Arquivo */}
+							<div className="flex-1 overflow-auto min-h-0 flex flex-col">
+								{/* Loading State */}
+								{isFileLoading && (
+									<div className="flex-1 flex flex-col items-center justify-center p-12 text-muted gap-3">
+										<span className="loading loading-spinner loading-lg text-primary" />
+										<span className="text-sm font-mono">
+											Buscando conteúdo do arquivo...
+										</span>
+									</div>
+								)}
+								{/* Error State */}
+								{fileError && (
+									<div className="flex-1 flex flex-col items-center justify-center p-12 text-error gap-2">
+										<span className="text-sm font-mono font-semibold">
+											Falha ao carregar o código.
+										</span>
+										<span className="text-xs text-muted">
+											Verifique se o arquivo existe ou tente novamente.
+										</span>
+									</div>
+								)}
+								{/* isBinary included State */}
+								{!isFileLoading && !fileError && isBinary && (
+									<div className="flex-1 flex flex-col items-center justify-center p-12 text-center gap-4">
+										<span className="text-muted text-sm font-mono max-w-md">
+											Este arquivo é binário ou mídia (como imagens, fontes ou
+											PDFs) e não pode ser exibido como texto.
+										</span>
+										<a
+											href={`${repository.html_url}/blob/${repository.default_branch || 'main'}/${selectedFilePath}`}
+											target="_blank"
+											rel="noopener noeferrer"
+											className="btn btn-primary btn-sm flex items-center gap-2 cursor-pointer"
+										>
+											<ExternalLink size={14} />
+											Ver no GitHub
+										</a>
+									</div>
+								)}
+								{!isFileLoading && !fileError && !isBinary && !isTooLarge && (
+									<pre className="flex-1 overflow-auto p-4 md:p-6 rounded-b-xl text-xs md:text-sm font-mono bg-base text-main leading-relaxed select-text">
+										<code>{codeContent}</code>
+									</pre>
+								)}
 							</div>
 						</div>
 					</div>,

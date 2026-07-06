@@ -1,4 +1,9 @@
-import type { RepoContentItem, Repository, User } from '../types/github'
+import type {
+	RepoContentItem,
+	RepoFileContent,
+	Repository,
+	User,
+} from '../types/github'
 
 const API_URL = 'https://api.github.com/users'
 // Token de acesso do GitHub carregado das variáveis de ambiente (Vite)
@@ -58,9 +63,41 @@ export const getUserRepositories = async (
 export const getRepositoryContent = async (
 	owner: string,
 	repo: string,
+	path: string = '',
 ): Promise<RepoContentItem[]> => {
 	const response = await fetch(
-		`https://api.github.com/repos/${owner}/${repo}/contents`,
+		`https://api.github.com/repos/${owner}/${repo}/contents${path ? `/${path}` : ''}`,
+		{
+			headers,
+		},
+	)
+
+	if (response.status === 404) {
+		throw new Error(`Erro ao buscar o conteúdo de ${repo}`)
+	}
+	if (response.status === 403) {
+		throw new Error(
+			`Limite de requisição do Github atingido ao buscar o conteúdo de ${repo}`,
+		)
+	}
+	if (response.status === 401) {
+		throw new Error(
+			`Token de acesso do Github expirado ao buscar o conteúdo de ${repo}`,
+		)
+	}
+
+	const data = await response.json()
+
+	return data
+}
+
+export const getRepositoryFile = async (
+	owner: string,
+	repo: string,
+	path: string,
+): Promise<RepoFileContent> => {
+	const response = await fetch(
+		`https://api.github.com/repos/${owner}/${repo}/contents/${path}`,
 		{
 			headers,
 		},

@@ -27,6 +27,7 @@ export interface Repository {
 	watchers_count: number
 	language: string | null
 	forks_count: number
+	default_branch?: string
 }
 
 export interface RepoContentItem {
@@ -109,4 +110,12 @@ export interface CandidateStoreState {
 		requirementKey: string,
 		value: boolean,
 	) => void
+}
+
+export interface RepoFileContent {
+	name: string
+	path: string
+	size: number
+	content: string
+	encoding: string
 }
