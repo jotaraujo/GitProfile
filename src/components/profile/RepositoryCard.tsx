@@ -20,38 +20,47 @@ interface RepositoryCardProps {
 }
 
 const RepositoryCard = ({ repository }: RepositoryCardProps) => {
+	// Controle de abertura do modal principal de detalhes do repositório
 	const [isOpen, setIsOpen] = useState(false)
+	// Caminho atual dentro do explorador de arquivos (vazio '' indica a raiz do projeto)
 	const [currentPath, setCurrentPath] = useState<string>('')
+	// Caminho do arquivo selecionado para visualização no modal de código (null indica que o visualizador está fechado)
 	const [selectedFilePath, setSelectedFilePath] = useState<string | null>(null)
 
 	useEffect(() => {
 		if (isOpen) {
+			// Bloqueia a rolagem da página principal de fundo enquanto o modal está ativo
 			document.body.style.overflow = 'hidden'
 			document.documentElement.style.overflow = 'hidden'
 
+			// Captura o atalho de teclado 'Escape' para fechamento intuitivo em cascata
 			const handleKeyDown = (e: KeyboardEvent) => {
 				if (e.key === 'Escape') {
 					if (selectedFilePath) {
+						// Se o visualizador de código estiver aberto, fecha apenas ele (volta para a estrutura de pastas)
 						setSelectedFilePath(null)
 					} else {
+						// Se estiver na estrutura de pastas, fecha o modal principal
 						setIsOpen(false)
 					}
 				}
 			}
 			window.addEventListener('keydown', handleKeyDown)
 
+			// Cleanup: restaura a rolagem e remove o listener de eventos de teclado
 			return () => {
 				document.body.style.overflow = 'unset'
 				document.documentElement.style.overflow = 'unset'
 				window.removeEventListener('keydown', handleKeyDown)
 			}
 		} else {
+			// Reseta a navegação de pastas e arquivos quando o modal principal é fechado
 			setCurrentPath('')
 			setSelectedFilePath(null)
 		}
 	}, [selectedFilePath, isOpen])
 
-	// Busca dinâmica de arquivos da raiz do repositório usando o hook customizado (só roda se o modal estiver aberto)
+	// Busca dinâmica da lista de arquivos da pasta atual (currentPath) do repositório
 	const {
 		data: contents,
 		isLoading,
@@ -63,6 +72,7 @@ const RepositoryCard = ({ repository }: RepositoryCardProps) => {
 		isOpen,
 	})
 
+	// Busca dinâmica do conteúdo do arquivo selecionado (selectedFilePath)
 	const {
 		data: fileData,
 		isLoading: isFileLoading,
@@ -74,19 +84,22 @@ const RepositoryCard = ({ repository }: RepositoryCardProps) => {
 		enabled: !!selectedFilePath,
 	})
 
+	// Remove o último segmento do path atual para navegar um diretório acima ("voltar")
 	const handleBackClick = () => {
 		const parts = currentPath.split('/').filter(Boolean)
 		parts.pop()
 		setCurrentPath(parts.join('/'))
 	}
 
+	// Array de segmentos de diretório para renderizar o breadcrumb rolável
 	const pathParts = currentPath.split('/').filter(Boolean)
 
-	// Ordena diretórios (dir) para o topo e arquivos (file) para a base
+	// Ordena a lista de conteúdos do GitHub colocando pastas (dir) sempre acima de arquivos (file)
 	const sortedContents = contents
 		? [...contents].sort((a, b) => b.type.localeCompare(a.type))
 		: []
 
+	// Lista de extensões comuns que indicam arquivos de mídia ou binários que não devem ser lidos como texto plano
 	const binaryExtensions = [
 		'.png',
 		'.jpg',
@@ -104,15 +117,27 @@ const RepositoryCard = ({ repository }: RepositoryCardProps) => {
 		'.gz',
 		'.mp4',
 	]
+
+	// Verifica se o arquivo selecionado é binário com base na sua extensão
 	const isBinary = selectedFilePath
 		? binaryExtensions.some((ext) =>
 				selectedFilePath.toLowerCase().endsWith(ext),
 			)
 		: false
+
+	// Limite de segurança de tamanho do arquivo: arquivos com mais de 1MB são marcados como muito grandes
 	const isTooLarge = fileData ? fileData.size > 1024 * 1024 : false
+
+	/**
+	 * Decodifica o conteúdo retornado pela API do GitHub (que vem em formato Base64).
+	 * O método convencional 'atob()' falha ou gera caracteres corrompidos ao encontrar
+	 * caracteres multibyte UTF-8 (como acentos em português ou emojis).
+	 * Para solucionar isso, convertemos os bytes em sequências de escape percentual (escape URI)
+	 * e então decodificamos de forma segura com decodeURIComponent.
+	 */
 	const decodeBase64 = (base64Str: string) => {
 		try {
-			const cleanedStr = base64Str.replace(/\s/g, '') //Limpa quebras de linha enviadas pela API
+			const cleanedStr = base64Str.replace(/\s/g, '') // Remove quebras de linha/espaços em branco gerados pela resposta da API
 			return decodeURIComponent(
 				atob(cleanedStr)
 					.split('')
@@ -120,9 +145,11 @@ const RepositoryCard = ({ repository }: RepositoryCardProps) => {
 					.join(''),
 			)
 		} catch (error) {
-			return atob(base64Str) //Fallback caso a string não esteja em formato UTF-8 compatível
+			return atob(base64Str) // Fallback seguro caso a string decodificada não possua caracteres UTF-8 complexos
 		}
 	}
+
+	// Conteúdo de código final pronto para exibição
 	const codeContent =
 		fileData?.content && !isBinary && !isTooLarge
 			? decodeBase64(fileData.content)
@@ -210,14 +237,14 @@ const RepositoryCard = ({ repository }: RepositoryCardProps) => {
 							<button
 								type="button"
 								onClick={() => setIsOpen(false)}
-								className="absolute right-4 top-4 text-muted hover:text-main cursor-pointer z-10"
+								className="absolute right-4 top-4 text-muted hover:text-main focus:outline-none focus:ring-2 focus:ring-primary-variant focus:ring-offset-2 focus:ring-offset-surface cursor-pointer z-10"
 								aria-label="Fechar modal"
 							>
 								<X size={20} />
 							</button>
 
 							{/* Split Layout: Duas colunas lado a lado no desktop */}
-							<div className="flex flex-col md:flex-row gap-6 min-h-0 flex-1 md:overflow-hidden">
+							<div className="flex flex-col md:flex-row gap-6 min-h-0 flex-1 overflow-y-auto md:overflow-hidden touch-pan-y">
 								{/* COLUNA ESQUERDA: Metadados */}
 								<div className="flex-grow flex-shrink flex flex-col gap-4 border-b border-outline md:border-b-0 md:border-r border-outline pb-6 md:pb-0 md:pr-6 justify-between md:max-w-md">
 									<div className="flex flex-col gap-3">
@@ -278,34 +305,41 @@ const RepositoryCard = ({ repository }: RepositoryCardProps) => {
 										Estrutura do Projeto
 									</span>
 
-									<div className="flex items-center gap-1.5 text-xs text-muted font-mono overflow-x-auto whitespace-nowrap py-1 flex-nowrap scrollbar-none">
-										<button
-											type="button"
-											onClick={() => setCurrentPath('')}
-											className="hover:text-main hover:underline cursor-pointer flex-shrink-0"
-										>
-											Root
-										</button>
+									<div className="relative overflow-hidden w-full">
+										{/* Fade Gradiente Esquerdo */}
+										<div className="absolute left-0 top-0 bottom-0 w-4 bg-gradient-to-r from-surface to-transparent pointer-events-none z-10" />
+										<div className="flex items-center gap-1.5 text-xs text-muted font-mono overflow-x-auto whitespace-nowrap px-4 py-1 flex-nowrap no-scrollbar">
+											<button
+												type="button"
+												onClick={() => setCurrentPath('')}
+												className="hover:text-main hover:underline cursor-pointer flex-shrink-0"
+											>
+												Root
+											</button>
 
-										{pathParts.map((part, index) => {
-											const partPath = pathParts.slice(0, index + 1).join('/')
+											{pathParts.map((part, index) => {
+												const partPath = pathParts.slice(0, index + 1).join('/')
 
-											return (
-												<span
-													key={partPath}
-													className="flex items-center gap-1.5 flex-shrink-0"
-												>
-													<span className="text-outline-variant">/</span>
-													<button
-														type="button"
-														onClick={() => setCurrentPath(partPath)}
-														className="hover:text-main hover:underline cursor-pointer"
+												return (
+													<span
+														key={partPath}
+														className="flex items-center gap-1.5 flex-shrink-0"
 													>
-														{part}
-													</button>
-												</span>
-											)
-										})}
+														<span className="text-outline-variant">/</span>
+														<button
+															type="button"
+															onClick={() => setCurrentPath(partPath)}
+															className="hover:text-main hover:underline cursor-pointer"
+														>
+															{part}
+														</button>
+													</span>
+												)
+											})}
+										</div>
+
+										{/* Fade Grandiente Direito */}
+										<div className="absolute right-0 top-0 bottom-0 w-4 bg-gradient-to-l from-surface to-transparent pointer-events-none z-10" />
 									</div>
 
 									{/* Loading State */}
@@ -326,7 +360,7 @@ const RepositoryCard = ({ repository }: RepositoryCardProps) => {
 
 									{/* Lista de Pastas e Arquivos */}
 									{!isLoading && sortedContents.length > 0 && (
-										<div className="flex flex-col border border-outline rounded-lg divide-y divide-outline bg-base overflow-y-auto max-h-[220px] md:max-h-[320px] pr-1 no-scrollbar">
+										<div className="flex flex-col border border-outline rounded-lg divide-y divide-outline bg-base overflow-y-auto max-h-[220px] md:max-h-[320px] pr-1 no-scrollbar flex-1 touch-pan-y overscroll-contain">
 											{currentPath && (
 												<div
 													onClick={handleBackClick}
@@ -393,7 +427,7 @@ const RepositoryCard = ({ repository }: RepositoryCardProps) => {
 			{selectedFilePath &&
 				createPortal(
 					<div
-						className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-md p-4 transition-all duration-300"
+						className="fixed inset-0 z-50 flex items-center justify-center bg-black/30 backdrop-blur-md p-4 transition-all duration-300"
 						onClick={() => setSelectedFilePath(null)}
 					>
 						<div
@@ -418,7 +452,7 @@ const RepositoryCard = ({ repository }: RepositoryCardProps) => {
 								<button
 									type="button"
 									onClick={() => setSelectedFilePath(null)}
-									className="text-muted hover:tex-main cursor-pointer p-2 rounded-lg hover:bg-surface-bright flex-shrink-0"
+									className="text-muted hover:tex-main p-2 rounded-lg hover:bg-surface-bright flex-shrink-0 focus:outline-none focus:ring-2 focus:ring-primary-variant focus:ring-offset-2 focus:ring-offset-surface cursor-pointer"
 									aria-label="Fechar vizualizador de código"
 								>
 									<X size={20} />
@@ -457,7 +491,7 @@ const RepositoryCard = ({ repository }: RepositoryCardProps) => {
 										<a
 											href={`${repository.html_url}/blob/${repository.default_branch || 'main'}/${selectedFilePath}`}
 											target="_blank"
-											rel="noopener noeferrer"
+											rel="noopener noreferrer"
 											className="btn btn-primary btn-sm flex items-center gap-2 cursor-pointer"
 										>
 											<ExternalLink size={14} />
@@ -466,9 +500,25 @@ const RepositoryCard = ({ repository }: RepositoryCardProps) => {
 									</div>
 								)}
 								{!isFileLoading && !fileError && !isBinary && !isTooLarge && (
-									<pre className="flex-1 overflow-auto p-4 md:p-6 rounded-b-xl text-xs md:text-sm font-mono bg-base text-main leading-relaxed select-text">
+									<pre className="flex-1 overflow-auto p-4 md:p-6 rounded-b-xl text-xs md:text-sm font-mono bg-base text-main leading-relaxed select-text touch-auto overscroll-contain">
 										<code>{codeContent}</code>
 									</pre>
+								)}
+								{!isFileLoading && !fileError && !isBinary && isTooLarge && (
+									<div className="flex-1 flex flex-col items-center justify-center p-12 text-error gap-2">
+										<span className="text-xs text-error">
+											Este arquivo é muito grande para ser exibido.
+										</span>
+										<a
+											href={`${repository.html_url}/blob/${repository.default_branch || 'main'}/${selectedFilePath}`}
+											target="_blank"
+											rel="noopener noreferrer"
+											className="btn btn-primary btn-sm flex items-center gap-2 cursor-pointer"
+										>
+											<ExternalLink size={14} />
+											Ver no GitHub
+										</a>
+									</div>
 								)}
 							</div>
 						</div>

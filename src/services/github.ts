@@ -60,6 +60,8 @@ export const getUserRepositories = async (
 	return data
 }
 
+// Busca a estrutura de arquivos e diretórios de um repositório em um caminho específico (path)
+// Retorna um array com metadados dos itens contidos na pasta
 export const getRepositoryContent = async (
 	owner: string,
 	repo: string,
@@ -72,6 +74,7 @@ export const getRepositoryContent = async (
 		},
 	)
 
+	// Tratamento detalhado de erros HTTP para feedback do usuário
 	if (response.status === 404) {
 		throw new Error(`Erro ao buscar o conteúdo de ${repo}`)
 	}
@@ -91,6 +94,8 @@ export const getRepositoryContent = async (
 	return data
 }
 
+// Busca os metadados e o conteúdo de um arquivo específico em um repositório
+// O conteúdo textual do arquivo é retornado pela API codificado em Base64
 export const getRepositoryFile = async (
 	owner: string,
 	repo: string,
@@ -103,6 +108,7 @@ export const getRepositoryFile = async (
 		},
 	)
 
+	// Tratamento detalhado de erros HTTP
 	if (response.status === 404) {
 		throw new Error(`Erro ao buscar o conteúdo de ${repo}`)
 	}

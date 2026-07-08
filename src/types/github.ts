@@ -4,6 +4,7 @@ export interface User {
 	name: string | null
 	avatar_url: string
 	bio: string | null
+	html_url: string
 	location: string | null
 	followers: number
 	following: number
@@ -30,6 +31,7 @@ export interface Repository {
 	default_branch?: string
 }
 
+// Interface representando um item (arquivo ou diretório) retornado pela listagem de conteúdo do GitHub API
 export interface RepoContentItem {
 	name: string
 	type: 'file' | 'dir'
@@ -68,42 +70,48 @@ export interface PinnedProfilesState {
 	isPinned(login: string): boolean
 }
 
+// Interface representando uma vaga de recrutamento criada pelo recrutador
 export interface Job {
-	id: string
-	title: string
-	requirements: string[]
-	createdAt: number
+	id: string // Identificador único da vaga (UUID ou random ID)
+	title: string // Título da vaga (ex: "Frontend Developer React")
+	requirements: string[] // Lista de requisitos da vaga (ex: ["React", "CSS", "TypeScript"])
+	createdAt: number // Timestamp de criação
 }
 
+// Interface representando um candidato na fila de triagem
 export interface Candidate {
-	login: string
-	name: string | null
-	avatar_url: string
-	bio: string | null
-	html_url: string
+	login: string // Username do GitHub do candidato (chave primária)
+	name: string | null // Nome do candidato
+	avatar_url: string // URL da imagem de perfil
+	bio: string | null // Biografia do GitHub
+	html_url: string // Link do perfil do GitHub
 
-	//Detalhes da Triagem (Apenas para o Recrutador)
-	jobRole: string //Cargo/Vaga alvo (ex: "Frontend React Jr")
-	contactUrl: string //URL do LinkedIn ou e-mail de contato
-	notes: string //Anotações textuais adicionais
-	status: 'pendente' | 'triagem' | 'aprovado' | 'recusado'
-	//Avaliação Dinâmica: Mapeia o requisito da vaga para true/false
-	//Ex: { "React.js": true, "Zustand": false, "Inglês Avançado": true }
+	// Detalhes da Triagem (Apenas para o Recrutador)
+	jobRole: string // Cargo/Vaga alvo (ex: "Frontend React Jr")
+	contactUrl: string // URL do LinkedIn ou e-mail de contato
+	notes: string // Anotações textuais adicionais de triagem
+	status: 'pendente' | 'triagem' | 'aprovado' | 'recusado' // Status na fila
+	// Avaliação Dinâmica: Mapeia cada requisito da vaga para um booleano
+	// Ex: { "React": true, "Zustand": false }
 	requirementsEvaluation: Record<string, boolean>
-	savedAt: number //Timestamp de quando o perfil foi salvo na fila
+	savedAt: number // Timestamp de quando o perfil foi salvo na fila
 }
 
+// Interface definindo o estado e as ações da store global de recrutamento (Zustand)
 export interface CandidateStoreState {
-	jobs: Job[]
-	candidates: Candidate[]
+	jobs: Job[] // Lista de todas as vagas cadastradas
+	candidates: Candidate[] // Lista de todos os candidatos em triagem
 
+	// Ações para gerenciamento de vagas
 	addJob: (job: Job) => void
+	updateJob: (id: string, updatedFields: Partial<Job>) => void
 	removeJob: (id: string) => void
 
+	// Ações para gerenciamento de candidatos
 	addCandidate: (candidate: Candidate) => void
 	removeCandidate: (login: string) => void
 
-	//Métodos de Triagem (Recrutamento)
+	// Métodos auxiliares para triagem em tempo real
 	updateCandidateStatus: (login: string, status: Candidate['status']) => void
 	evaluateRequirement: (
 		candidateLogin: string,
@@ -112,10 +120,11 @@ export interface CandidateStoreState {
 	) => void
 }
 
+// Interface representando os metadados e conteúdo base64 retornado ao buscar um arquivo do GitHub
 export interface RepoFileContent {
 	name: string
 	path: string
 	size: number
-	content: string
-	encoding: string
+	content: string // Conteúdo codificado em base64 retornado pela API
+	encoding: string // Tipo de codificação (geralmente "base64")
 }
