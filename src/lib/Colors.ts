@@ -1,3 +1,5 @@
+// Mapeamento estático de cores oficiais para as principais linguagens de programação do GitHub
+// Usado nos gráficos e indicadores de stack na interface
 export const languageColors: Record<string, string> = {
 	JavaScript: '#f1e05a',
 	TypeScript: '#3178c6',
@@ -16,5 +18,5 @@ export const languageColors: Record<string, string> = {
 	Kotlin: '#f18e33',
 	Vue: '#41b883',
 	Shell: '#89e051',
-	Outras: '#8b949e',
+	Outras: '#8b949e', // Cor neutra para linguagens secundárias ou desconhecidas
 }

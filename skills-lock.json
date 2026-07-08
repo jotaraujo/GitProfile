@@ -31,11 +31,23 @@
       "skillPath": "skills/frontend-design/SKILL.md",
       "computedHash": "93f53fd1c0352d3d7ec17b8f73d7351bf76f4821e55d123c9d2abc2c53ba48e4"
     },
+    "impeccable": {
+      "source": "pbakaus/impeccable",
+      "sourceType": "github",
+      "skillPath": ".agents/skills/impeccable/SKILL.md",
+      "computedHash": "e237e1c1c8dfe6c74fb24502669219a846d25834b1a104fdf865f2830a48cf49"
+    },
     "prd-generator": {
       "source": "jamesrochabrun/skills",
       "sourceType": "github",
       "skillPath": "skills/prd-generator/SKILL.md",
       "computedHash": "566a93a7a931b00fae62d16901b426576784cb213cca5bb9d3a6b467c7530e59"
+    },
+    "prototype": {
+      "source": "mattpocock/skills",
+      "sourceType": "github",
+      "skillPath": "skills/engineering/prototype/SKILL.md",
+      "computedHash": "d69b75e7b60e183d39b8a33cb8b2096e614fd9b48a5249c1cc951340961f86fa"
     },
     "setup-pre-commit": {
       "source": "mattpocock/skills",
@@ -48,6 +60,12 @@
       "sourceType": "github",
       "skillPath": "skills/supabase-postgres-best-practices/SKILL.md",
       "computedHash": "3639bed1f40b3fbadae79fee631c42c89b2d1f5c30b05d5aa3cca06422a6bbbc"
+    },
+    "to-prd": {
+      "source": "mattpocock/skills",
+      "sourceType": "github",
+      "skillPath": "skills/engineering/to-prd/SKILL.md",
+      "computedHash": "7e1950ebb84721293b913d54481e0723172abb23fa5e0d0d488594ca45ffb421"
     },
     "token-efficiency": {
       "source": "delphine-l/claude_global",

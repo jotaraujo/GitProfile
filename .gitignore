@@ -18,6 +18,8 @@ DESIGN_SYSTEM.md
 src/docs/
 .agents/
 .vscode/
+.impeccable/
+PRODUCT.md
 
 # Editor directories and files
 .idea
@@ -27,3 +29,6 @@ src/docs/
 *.njsproj
 *.sln
 *.sw?
+.superpowers/
+.codex/
+

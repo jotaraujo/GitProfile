@@ -1,4 +1,4 @@
-@import "tailwindcss";
+@import 'tailwindcss';
 @plugin "daisyui" {
 	themes:
 		dark --default,
@@ -17,11 +17,12 @@
 	--color-tertiary: #fabc45;
 	--color-success: #67df70;
 	--color-error: #93000a;
+	--color-pending: #fde248;
 	--color-main: #dae3ee; /* Usado para títulos e textos principais */
 	--color-muted: #c0c7d4; /* Usado para biografias, datas e contadores secundários. */
 
-	--font-sans: "Geist", system-ui, sans-serif;
-	--font-mono: "Geist Mono", ui-monospace, monospace;
+	--font-sans: 'Geist', system-ui, sans-serif;
+	--font-mono: 'Geist Mono', ui-monospace, monospace;
 }
 
 body {
@@ -67,27 +68,11 @@ body {
 }
 
 .flip-front {
-  position: relative;
+	position: relative;
 }
 
 .flip-back {
-  position: absolute;
-  inset: 0;
-  transform: rotateY(180deg);
-}
-
-@keyframes float-blob {
-	0%, 100% {
-		transform: translate(0px, 0px) scale(1);
-	}
-	33% {
-		transform: translate(30px, -50px) scale(1.1);
-	}
-	66% {
-		transform: translate(-20px, 20px) scale(0.95);
-	}
-}
-
-.animate-blob {
-	animation: float-blob 12s infinite ease-in-out;
+	position: absolute;
+	inset: 0;
+	transform: rotateY(180deg);
 }
