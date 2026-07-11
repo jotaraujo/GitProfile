@@ -1,6 +1,6 @@
-import { GitFork, Star } from 'lucide-react'
+import { AlertCircle, Compass, GitFork, Star } from 'lucide-react'
 import { useEffect, useMemo, useRef } from 'react'
-import { useParams, useNavigate } from 'react-router-dom'
+import { useParams, useNavigate, Link } from 'react-router-dom'
 import ProfileCard from '../components/profile/ProfileCard'
 import RepositoryCard from '../components/profile/RepositoryCard'
 import { useGithubRepos } from '../hooks/useGithubRepos'
@@ -196,7 +196,42 @@ const Profile = () => {
 	// 5. RETORNO: ESTADO DE ERRO (isError)
 	// =========================================================
 	if (isError) {
-		return <p>Erro: {error?.message}</p>
+		let title = 'Erro na busca'
+		let message = 'Não foi possível carregar as informações do usuário'
+		let Icon = AlertCircle
+		let inColor = 'text-error'
+
+		if (error?.message === 'Usuário não encontrado.') {
+			title = `Erro ao buscar usuário.`
+			message = `O usuário ${username} não foi encontrado.`
+			Icon = Compass
+			inColor = 'text-muted'
+		} else if (error?.message === 'Limite de requisições do GitHub atingido.') {
+			title = 'Limite de Requisições atingida.'
+			message = `O Github disponibiliza apenas 60 requisições por hora para usuários não autenticados. Tente novamente mais tarde ou utilize um token de acesso pessoal para aumentar o limite de requisições.`
+			Icon = AlertCircle
+			inColor = 'text-tertiary'
+		}
+
+		return (
+			<div className="flex h-[calc(100svh-64px)] w-full items-center justify-center bg-base p-6">
+				<div className="bg-surface border border-outline rounded-lg p-8 max-w-md w-full text-center flex flex-col items-center gap-6">
+					<Icon size={48} className={inColor} aria-hidden="true" />
+					<h1 className="text-main font-sans font-bold text-2xl tracking-tight">
+						{title}
+					</h1>
+					<p className="text-muted font-sans text-sm leading-relaxed">
+						{message}
+					</p>
+					<Link
+						to="/"
+						className="btn btn-outline border-outline text-main hover:border-primary-variant hover:text-primary-variant transition-all duration-200 motion-safe:hover:scale-[1.01] w-full mt-2"
+					>
+						Voltar para a Página Incial
+					</Link>
+				</div>
+			</div>
+		)
 	}
 
 	// =========================================================
