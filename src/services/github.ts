@@ -23,7 +23,7 @@ export const userSearch = async (username: string): Promise<User> => {
 			throw new Error('Usuário não encontrado.')
 		}
 		if (response.status === 403) {
-			throw new Error('Limite de requisição do Github atingido.')
+			throw new Error('Limite de requisições do GitHub atingido.')
 		}
 		throw new Error('Erro ao buscar usuário.')
 	}
@@ -50,7 +50,7 @@ export const getUserRepositories = async (
 			throw new Error(`Erro ao buscar os repositórios de ${username}.`)
 		}
 		if (response.status === 403) {
-			throw new Error('Limite de requisição do GitHub atingido.')
+			throw new Error('Limite de requisições do GitHub atingido.')
 		}
 		throw new Error('Erro ao buscar os repositórios.')
 	}
@@ -80,12 +80,12 @@ export const getRepositoryContent = async (
 	}
 	if (response.status === 403) {
 		throw new Error(
-			`Limite de requisição do Github atingido ao buscar o conteúdo de ${repo}`,
+			`Limite de requisições do GitHub atingido ao buscar o conteúdo de ${repo}`,
 		)
 	}
 	if (response.status === 401) {
 		throw new Error(
-			`Token de acesso do Github expirado ao buscar o conteúdo de ${repo}`,
+			`Token de acesso do GitHub expirado ao buscar o conteúdo de ${repo}`,
 		)
 	}
 
@@ -114,7 +114,7 @@ export const getRepositoryFile = async (
 	}
 	if (response.status === 403) {
 		throw new Error(
-			`Limite de requisição do Github atingido ao buscar o conteúdo de ${repo}`,
+			`Limite de requisições do Github atingido ao buscar o conteúdo de ${repo}`,
 		)
 	}
 	if (response.status === 401) {
