@@ -9,7 +9,7 @@ import {
 	ExternalLink,
 } from 'lucide-react'
 import type { Repository } from '../../types/github'
-import { languageColors } from '../../lib/Colors'
+import { languageColors } from '../../lib/colors'
 import { useEffect, useState } from 'react'
 import { createPortal } from 'react-dom'
 import { useRepoContents } from '../../hooks/useRepoContents'

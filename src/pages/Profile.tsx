@@ -5,7 +5,7 @@ import ProfileCard from '../components/profile/ProfileCard'
 import RepositoryCard from '../components/profile/RepositoryCard'
 import { useGithubRepos } from '../hooks/useGithubRepos'
 import { useGithubUser } from '../hooks/useGithubUser'
-import { languageColors } from '../lib/Colors'
+import { languageColors } from '../lib/colors'
 import { useSearchHistoryStore } from '../store/useSearchHistoryStore'
 
 const Profile = () => {
