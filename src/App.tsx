@@ -4,6 +4,7 @@ import ErrorPage from './pages/ErrorPage'
 import Profile from './pages/Profile'
 import RootLayout from './components/layout/RootLayout'
 import CandidatesDashboard from './pages/CandidatesDashboard'
+import useAuthListener from './hooks/useAuthListener'
 
 // Definição das rotas da aplicação usando o createBrowserRouter
 const router = createBrowserRouter([
@@ -32,6 +33,8 @@ const router = createBrowserRouter([
 ])
 
 const App = () => {
+	useAuthListener()
+
 	// Provedor de rotas que expõe a estrutura definida para toda a aplicação
 	return <RouterProvider router={router} />
 }

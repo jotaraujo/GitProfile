@@ -5,7 +5,7 @@ import Logo from '../../assets/logo.svg?react'
 
 // Componente Header: Barra de navegação global exibida no topo da aplicação
 const Header = () => {
-	const { user, logout } = useAuthStore()
+	const { user, signOut } = useAuthStore()
 
 	return (
 		<header className="navbar bg-surface border-b border-outline sticky top-0 z-50">
@@ -74,7 +74,10 @@ const Header = () => {
 							<summary className="btn btn-ghost btn-circle avatar">
 								<div className="w-8 rounded-full border border-outline-variant">
 									<img
-										src={user.avatar_url || 'https://github.com/github.png'}
+										src={
+											user.user_metadata?.avatar_url ||
+											'https://github.com/github.png'
+										}
 										alt={`${user ? `avatar de ${user.email}` : ''}`}
 									/>
 								</div>
@@ -83,7 +86,7 @@ const Header = () => {
 								<li>
 									<button
 										className="btn btn-outline btn-secondary btn-sm"
-										onClick={logout}
+										onClick={signOut}
 									>
 										Sair
 									</button>
