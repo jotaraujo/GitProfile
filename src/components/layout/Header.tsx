@@ -104,7 +104,7 @@ const Header = () => {
 							Entrar
 						</Link>
 						<Link
-							to="/register"
+							to="/login?mode=register"
 							className="btn btn-secondary btn-sm rounded-full"
 						>
 							Cadastre-se
