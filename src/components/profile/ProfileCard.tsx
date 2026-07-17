@@ -20,7 +20,7 @@ const date = (data: string) => {
 	return formatedDate
 }
 
-const ProfileCard = ({ user, isRecruiter = true }: ProfileCardProps) => {
+const ProfileCard = ({ user, isRecruiter }: ProfileCardProps) => {
 	// Hooks e ações da store de recrutamento global (Zustand)
 	const { isPinned, pinProfile, unpinProfile } = usePinnedProfileStore()
 	const {

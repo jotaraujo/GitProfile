@@ -7,6 +7,7 @@ import { useGithubRepos } from '../hooks/useGithubRepos'
 import { useGithubUser } from '../hooks/useGithubUser'
 import { languageColors } from '../lib/colors'
 import { useSearchHistoryStore } from '../store/useSearchHistoryStore'
+import { useAuthStore } from '../store/useAuthStore'
 
 const Profile = () => {
 	// =========================================================
@@ -14,6 +15,9 @@ const Profile = () => {
 	// =========================================================
 	const navigate = useNavigate()
 	const { username } = useParams<{ username: string }>()
+	const { profile } = useAuthStore()
+
+	const isRecruiter = profile?.user_type === 'recruiter'
 
 	// Requisições para a API do GitHub via react-query
 	const { data, isLoading, isError, error } = useGithubUser(username || '')
@@ -210,7 +214,7 @@ const Profile = () => {
 			title = 'Limite de Requisições atingida.'
 			message = `O Github disponibiliza apenas 60 requisições por hora para usuários não autenticados. Tente novamente mais tarde ou utilize um token de acesso pessoal para aumentar o limite de requisições.`
 			Icon = AlertCircle
-			inColor = 'text-tertiary'
+			inColor = 'text-error'
 		}
 
 		return (
@@ -242,7 +246,7 @@ const Profile = () => {
 			<main className="bg-base grid grid-cols-1 lg:grid-cols-[400px_1fr_1fr] lg:grid-rows-[auto_1fr] lg:h-[calc(100svh-64px)] lg:overflow-hidden">
 				{/* 6.1 Barra lateral esquerda - Informações do perfil */}
 				<div className="bg-base lg:col-start-1 lg:row-span-2 lg:border-r border-outline flex flex-col items-center">
-					<ProfileCard user={data} />
+					<ProfileCard user={data} isRecruiter={isRecruiter} />
 				</div>
 
 				{/* 6.2 Cabeçalho de Métricas (Direita Superior) */}
