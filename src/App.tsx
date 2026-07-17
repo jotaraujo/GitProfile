@@ -5,6 +5,8 @@ import Profile from './pages/Profile'
 import RootLayout from './components/layout/RootLayout'
 import CandidatesDashboard from './pages/CandidatesDashboard'
 import useAuthListener from './hooks/useAuthListener'
+import Login from './pages/Login'
+import CompleteProfile from './pages/CompleteProfile'
 
 // Definição das rotas da aplicação usando o createBrowserRouter
 const router = createBrowserRouter([
@@ -26,6 +28,16 @@ const router = createBrowserRouter([
 			{
 				path: '/candidates',
 				element: <CandidatesDashboard />,
+				errorElement: <ErrorPage />,
+			},
+			{
+				path: '/login',
+				element: <Login />,
+				errorElement: <ErrorPage />,
+			},
+			{
+				path: '/complete-profile',
+				element: <CompleteProfile />,
 				errorElement: <ErrorPage />,
 			},
 		],
