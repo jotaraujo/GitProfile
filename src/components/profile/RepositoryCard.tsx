@@ -1,3 +1,10 @@
+import { useEffect, useState } from 'react'
+import { createPortal } from 'react-dom'
+import { useAuthStore } from '../../store/useAuthStore'
+import { useRepoContents } from '../../hooks/useRepoContents'
+import { useRepoFileContent } from '../../hooks/useRepoFileContent'
+import { supabase } from '../../lib/supabase'
+import { languageColors } from '../../lib/colors'
 import {
 	GitFork,
 	Star,
@@ -9,23 +16,40 @@ import {
 	ExternalLink,
 } from 'lucide-react'
 import type { Repository } from '../../types/github'
-import { languageColors } from '../../lib/colors'
-import { useEffect, useState } from 'react'
-import { createPortal } from 'react-dom'
-import { useRepoContents } from '../../hooks/useRepoContents'
-import { useRepoFileContent } from '../../hooks/useRepoFileContent'
 
 interface RepositoryCardProps {
 	repository: Repository
 }
 
 const RepositoryCard = ({ repository }: RepositoryCardProps) => {
+	const { user } = useAuthStore()
+
 	// Controle de abertura do modal principal de detalhes do repositório
 	const [isOpen, setIsOpen] = useState(false)
 	// Caminho atual dentro do explorador de arquivos (vazio '' indica a raiz do projeto)
 	const [currentPath, setCurrentPath] = useState<string>('')
 	// Caminho do arquivo selecionado para visualização no modal de código (null indica que o visualizador está fechado)
 	const [selectedFilePath, setSelectedFilePath] = useState<string | null>(null)
+	// Verifica se o perfil e o repositório estão salvos
+	const [isSaved, setIsSaved] = useState(false)
+
+	useEffect(() => {
+		const checkSaved = async () => {
+			if (!user?.id) return
+
+			const { data, error } = await supabase
+				.from('saved_repositories')
+				.select('id')
+				.eq('user_id', user?.id)
+				.eq('repo_id', repository.id)
+				.maybeSingle()
+
+			setIsSaved(Boolean(data))
+
+			if (error) throw error
+		}
+		checkSaved()
+	}, [user, repository.id])
 
 	useEffect(() => {
 		if (isOpen) {
@@ -89,6 +113,35 @@ const RepositoryCard = ({ repository }: RepositoryCardProps) => {
 		const parts = currentPath.split('/').filter(Boolean)
 		parts.pop()
 		setCurrentPath(parts.join('/'))
+	}
+
+	const handleToggleSave = async (e: React.MouseEvent) => {
+		e.preventDefault()
+		e.stopPropagation()
+
+		if (!user) return
+
+		if (isSaved) {
+			const { error } = await supabase
+				.from('saved_repositories')
+				.delete()
+				.eq('user_id', user.id)
+				.eq('repo_id', repository.id)
+			if (error) throw error
+			setIsSaved(false)
+		} else {
+			const { error } = await supabase.from('saved_repositories').insert({
+				user_id: user.id,
+				repo_id: repository.id,
+				repo_name: repository.name,
+				owner_login: repository.owner.login,
+				description: repository.description,
+				language: repository.language,
+				stars_count: repository.stargazers_count,
+			})
+			if (error) throw error
+			setIsSaved(true)
+		}
 	}
 
 	// Array de segmentos de diretório para renderizar o breadcrumb rolável
@@ -167,9 +220,19 @@ const RepositoryCard = ({ repository }: RepositoryCardProps) => {
 					<h4 className="text-main hover:text-primary-variant font-sans font-semibold text-base transition-colors">
 						{repository.name}
 					</h4>
-					<span className="badge badge-outline border-outline-variant text-muted text-xs px-2 py-1 rounded-full">
-						Público
-					</span>
+					<div className="flex items-center gap-2">
+						<button
+							type="button"
+							onClick={handleToggleSave}
+							title={isSaved ? 'Remover dos favoritos' : 'Salvar repositório'}
+							className={`p-1.5 rounded-md transition-colors hover:bg-surface cursor-pointer ${isSaved ? 'text-tertiary' : 'text-muted hover:text-main'}`}
+						>
+							<Star size={14} className={isSaved ? 'fill-current' : ''} />
+						</button>
+						<span className="badge badge-outline border-outline-variant text-muted text-xs px-2 py-1 rounded-full">
+							Público
+						</span>
+					</div>
 				</div>
 
 				{/* 2. DESCRIÇÃO: Breve resumo do projeto */}

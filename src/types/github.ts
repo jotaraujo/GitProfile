@@ -48,9 +48,10 @@ export interface SearchHistoryItem {
 // Tipagem de estado e ações da store useSearchHistoryStore (Zustand)
 export interface SearchHistoryState {
 	history: SearchHistoryItem[]
-	addSearch(username: string, avatarUrl: string): void
-	removeSearch(username: string): void
-	clearHistory(): void
+	addSearch(username: string, avatarUrl: string, userId?: string): Promise<void>
+	removeSearch(username: string, userId?: string): Promise<void>
+	clearHistory(userId?: string): Promise<void>
+	fetchHistory(userId?: string): Promise<void>
 }
 
 // Informações básicas mantidas para um desenvolvedor fixado (Pinned)

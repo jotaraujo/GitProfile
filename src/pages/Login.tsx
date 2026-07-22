@@ -117,25 +117,18 @@ const Login = () => {
 						throw new Error('O usuário do GitHub informado não foi encontrado.')
 				}
 
-				const { data: signUpData, error: signUpError } =
-					await supabase.auth.signUp({
-						email,
-						password,
-					})
-
-				if (signUpError) throw signUpError
-
-				if (signUpData.user) {
-					const { error: profileError } = await supabase
-						.from('user_profiles')
-						.insert({
-							id: signUpData.user.id,
+				const { error: signUpError } = await supabase.auth.signUp({
+					email,
+					password,
+					options: {
+						data: {
 							user_type: userType,
 							github_username: userType === 'developer' ? githubUsername : null,
-						})
+						},
+					},
+				})
 
-					if (profileError) throw profileError
-				}
+				if (signUpError) throw signUpError
 
 				navigate('/') //Sucesso! Redireciona para Home
 			}
