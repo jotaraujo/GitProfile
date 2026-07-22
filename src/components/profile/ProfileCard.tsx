@@ -3,6 +3,8 @@ import { useEffect, useState } from 'react'
 import { usePinnedProfileStore } from '../../store/usePinnedProfileStore'
 import type { User, Candidate, Job } from '../../types/github'
 import { useCandidateStore } from '../../store/useCandidateStore'
+import { useAuthStore } from '../../store/useAuthStore'
+import { supabase } from '../../lib/supabase'
 
 interface ProfileCardProps {
 	user: User
@@ -22,6 +24,7 @@ const date = (data: string) => {
 
 const ProfileCard = ({ user, isRecruiter }: ProfileCardProps) => {
 	// Hooks e ações da store de recrutamento global (Zustand)
+	const { user: currentUser } = useAuthStore()
 	const { isPinned, pinProfile, unpinProfile } = usePinnedProfileStore()
 	const {
 		candidates,
@@ -81,7 +84,7 @@ const ProfileCard = ({ user, isRecruiter }: ProfileCardProps) => {
 	}, [existingCandidate, jobs])
 
 	// Alterna o estado de fixação do perfil no topo da página
-	const handlePinToggle = () => {
+	const handlePinToggle = async () => {
 		if (pinned) {
 			unpinProfile(user.login)
 		} else {
@@ -92,6 +95,27 @@ const ProfileCard = ({ user, isRecruiter }: ProfileCardProps) => {
 				bio: user.bio,
 				pinnedAt: new Date().toISOString(),
 			})
+		}
+
+		if (!currentUser) return
+
+		try {
+			if (pinned) {
+				await supabase
+					.from('saved_profiles')
+					.delete()
+					.eq('user_id', currentUser.id)
+					.eq('github_username', user.login)
+			} else {
+				await supabase.from('saved_profiles').insert({
+					user_id: currentUser.id,
+					github_username: user.login,
+					avatar_url: user.avatar_url,
+					display_name: user.name,
+				})
+			}
+		} catch (err) {
+			console.error('Erro ao sincronizar perfil salvo no supabase:', err)
 		}
 	}
 

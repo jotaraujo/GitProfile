@@ -15,7 +15,7 @@ const Profile = () => {
 	// =========================================================
 	const navigate = useNavigate()
 	const { username } = useParams<{ username: string }>()
-	const { profile } = useAuthStore()
+	const { profile, user } = useAuthStore()
 
 	const isRecruiter = profile?.user_type === 'recruiter'
 
@@ -97,11 +97,11 @@ const Profile = () => {
 	useEffect(() => {
 		if (!data) return
 
-		addSearch(data.login, data.avatar_url)
+		addSearch(data.login, data.avatar_url, user?.id)
 
 		if (username !== data.login)
 			navigate(`/profile/${data.login}`, { replace: true })
-	}, [data, username, addSearch, navigate])
+	}, [data, username, addSearch, navigate, user])
 
 	// Gerencia o scroll infinito observando um divisor marcador de fim de página
 	useEffect(() => {

@@ -7,6 +7,8 @@ import CandidatesDashboard from './pages/CandidatesDashboard'
 import useAuthListener from './hooks/useAuthListener'
 import Login from './pages/Login'
 import CompleteProfile from './pages/CompleteProfile'
+import History from './pages/History'
+import Saved from './pages/Saved'
 
 // Definição das rotas da aplicação usando o createBrowserRouter
 const router = createBrowserRouter([
@@ -38,6 +40,16 @@ const router = createBrowserRouter([
 			{
 				path: '/complete-profile',
 				element: <CompleteProfile />,
+				errorElement: <ErrorPage />,
+			},
+			{
+				path: '/history',
+				element: <History />,
+				errorElement: <ErrorPage />,
+			},
+			{
+				path: '/saved',
+				element: <Saved />,
 				errorElement: <ErrorPage />,
 			},
 		],
