@@ -100,7 +100,7 @@ const Profile = () => {
 		Boolean(data?.login) &&
 		profile?.user_type === 'developer' &&
 		Boolean(profile?.github_username) &&
-		profile?.github_username?.toLowerCase() !== data.login.toLowerCase()
+		profile?.github_username?.toLowerCase() !== data?.login?.toLowerCase()
 
 	// Salva a pesquisa atual no histórico global e padroniza a rota se necessário
 	useEffect(() => {

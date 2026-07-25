@@ -21,7 +21,7 @@ const StackComparisonModal = ({
 	targetStats,
 }: StackComparisonProps) => {
 	// Busca os repositórios do usuário logado via React Query
-	const { data: myRepoData, isLoading } = useGithubRepos(myUsername)
+	const { data: myRepoData } = useGithubRepos(myUsername)
 
 	const myStats = useMemo(() => {
 		const allRepos = myRepoData?.pages.flatMap((page) => page) || []
