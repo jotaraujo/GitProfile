@@ -29,7 +29,7 @@ const AccountSettingsModal = ({
 			setUserType(profile.user_type)
 			setGithubUsername(profile.github_username || '')
 		}
-	}, [profile, isOpen])
+	}, [profile])
 
 	const handleSave = async (e: React.FormEvent) => {
 		e.preventDefault()
