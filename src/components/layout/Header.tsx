@@ -1,9 +1,22 @@
 import { Link, useNavigate } from 'react-router-dom'
+import { useEffect, useRef, useState } from 'react'
+import {
+	Bell,
+	Plus,
+	Search,
+	AlertCircle,
+	X,
+	User,
+	Settings,
+	Keyboard,
+	LogOut,
+} from 'lucide-react'
 import { useAuthStore } from '../../store/useAuthStore'
-import { Bell, Plus, Search, AlertCircle, X } from 'lucide-react'
-import Logo from '../../assets/logo.svg?react'
+import { useShortcutsStore } from '../../store/useShortcutsStore'
+import AccountSettingsModal from '../modals/AccountSettingsModal'
+import ShortcutsModal from '../modals/ShortcutsModal'
 import { z } from 'zod'
-import { useState } from 'react'
+import Logo from '../../assets/logo.svg?react'
 
 const searchSchema = z
 	.string()
@@ -17,11 +30,44 @@ const searchSchema = z
 // Componente Header: Barra de navegação global exibida no topo da aplicação
 const Header = () => {
 	const { user, profile, signOut } = useAuthStore()
+	const { searchShortcut } = useShortcutsStore()
 	const navigate = useNavigate()
 
 	const [isSearchOpen, setIsSearchOpen] = useState(false)
 	const [searchQuery, setSearchQuery] = useState('')
 	const [searchError, setSearchError] = useState<string | null>(null)
+	const [isSettingOpen, setIsSettingOpen] = useState(false)
+	const [isShortcutOpen, setIsShortcutOpen] = useState(false)
+
+	const dropdownRef = useRef<HTMLDetailsElement>(null)
+
+	useEffect(() => {
+		const handleKeyDown = (e: KeyboardEvent) => {
+			const hasModifier = searchShortcut.ctrlKey ? e.ctrlKey || e.metaKey : true
+
+			if (hasModifier && e.key.toLowerCase() === searchShortcut.key) {
+				e.preventDefault()
+				setIsSearchOpen(true)
+			}
+		}
+
+		const handleClickOutside = (e: MouseEvent) => {
+			if (
+				dropdownRef.current &&
+				!dropdownRef.current.contains(e.target as Node)
+			) {
+				dropdownRef.current.removeAttribute('open')
+			}
+		}
+
+		window.addEventListener('keydown', handleKeyDown)
+		document.addEventListener('click', handleClickOutside)
+
+		return () => {
+			window.removeEventListener('keydown', handleKeyDown)
+			document.removeEventListener('click', handleClickOutside)
+		}
+	}, [searchShortcut])
 
 	const handleSearchSubmit = (e: React.SubmitEvent) => {
 		e.preventDefault()
@@ -125,7 +171,7 @@ const Header = () => {
 						</button>
 
 						{/* Menu Dropdown de Opções e Logout */}
-						<details className="dropdown dropdown-end">
+						<details ref={dropdownRef} className="dropdown dropdown-end">
 							<summary className="btn btn-ghost btn-circle avatar">
 								<div className="w-8 rounded-full border border-outline-variant">
 									<img
@@ -137,13 +183,66 @@ const Header = () => {
 									/>
 								</div>
 							</summary>
-							<ul className="menu dropdown-content bg-surface border border-outline rounded-box z-10 w-52 p-2 shadow-xl">
+							<ul className="menu dropdown-content bg-surface border border-outline rounded-box z-10 w-64 p-2 shadow-xl">
+								{/* Cabeçalho de Identificação (E-mail + Badge do Perfil) */}
+								<li className="px-3 py-2 border-b border-outline/50 flex flex-col gap-0.5 pointer-events-none">
+									<span className="text-xs font-mono text-muted truncate">
+										{user.email}
+									</span>
+									<span className="badge badge-primary badge-outline text-[10px] uppercase font-mono w-fit mt-1">
+										{profile?.user_type === 'developer'
+											? 'Desenvolvedor'
+											: 'Recrutador'}
+									</span>
+								</li>
+
+								{/* Meu Perfil GitHub (visível se for Desenvolvedor e tiver github_username) */}
+								{profile?.user_type === 'developer' &&
+									profile?.github_username && (
+										<li>
+											<Link
+												to={`/profile/${profile.github_username}`}
+												className="text-sm text-main hover:bg-bright flex items-center gap-2 cursor-pointer"
+											>
+												<User size={16} className="text-primary-variant" />
+												<span>Meu Perfil</span>
+											</Link>
+										</li>
+									)}
+
+								{/* Configurações da conta */}
 								<li>
 									<button
-										className="btn btn-outline btn-secondary btn-sm"
-										onClick={signOut}
+										type="button"
+										onClick={() => setIsSettingOpen(true)}
+										className="text-sm text-main hover:bg-bright flex items-center gap-2 w-full text-left cursor-pointer"
 									>
-										Sair
+										<Settings size={16} className="text-primary-variant" />
+										<span>Configurações da conta</span>
+									</button>
+								</li>
+
+								{/* Atalhos do Teclado */}
+								<li>
+									<button
+										type="button"
+										onClick={() => setIsShortcutOpen(true)}
+										className="text-sm text-main hover:bg-bright flex items-center gap-2 w-full text-left cursor-pointer"
+									>
+										<Keyboard size={16} className="text-muted" />
+										<span>Atalhos do Teclado</span>
+									</button>
+								</li>
+
+								{/* Logout */}
+								<li className="border-t border-outline/50 mt-1 pt-1">
+									<button
+										type="button"
+										onClick={signOut}
+										className="text-sm text-error hover:bg-error/10 flex items-center gap-2 w-full text-left cursor-pointer"
+									>
+										<LogOut size={16} />
+										<span>Sair</span>
 									</button>
 								</li>
 							</ul>
@@ -244,6 +343,14 @@ const Header = () => {
 					/>
 				</div>
 			)}
+			<AccountSettingsModal
+				isOpen={isSettingOpen}
+				onClose={() => setIsSettingOpen(false)}
+			/>
+			<ShortcutsModal
+				isOpen={isShortcutOpen}
+				onClose={() => setIsShortcutOpen(false)}
+			/>
 		</header>
 	)
 }

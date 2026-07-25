@@ -24,7 +24,10 @@ const date = (data: string) => {
 
 const ProfileCard = ({ user, isRecruiter }: ProfileCardProps) => {
 	// Hooks e ações da store de recrutamento global (Zustand)
-	const { user: currentUser } = useAuthStore()
+	const { user: currentUser, profile } = useAuthStore()
+	const isOwnProfile =
+		Boolean(profile?.github_username) &&
+		profile?.github_username?.toLowerCase() === user.login.toLowerCase()
 	const { isPinned, pinProfile, unpinProfile } = usePinnedProfileStore()
 	const {
 		candidates,
@@ -250,9 +253,16 @@ const ProfileCard = ({ user, isRecruiter }: ProfileCardProps) => {
 								<Pin size={18} className={pinned ? 'fill-current' : ''} />
 							</button>
 						</div>
-						<h2 className="text-primary font-mono text-sm mb-3">
-							@{user.login}
-						</h2>
+						<div className="flex items-center gap-2">
+							<h2 className="text-primary font-mono text-sm mb-3">
+								@{user.login}
+							</h2>
+							{isOwnProfile && (
+								<span className="badge badge-primary badge-outline text-xs mb-3">
+									Seu Perfil
+								</span>
+							)}
+						</div>
 						<p className="text-muted text-xs mb-4">
 							Membro desde {date(user.created_at)}
 						</p>

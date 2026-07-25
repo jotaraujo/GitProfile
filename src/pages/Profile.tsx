@@ -1,5 +1,5 @@
-import { AlertCircle, Compass, GitFork, Star } from 'lucide-react'
-import { useEffect, useMemo, useRef } from 'react'
+import { AlertCircle, Compass, GitFork, Star, Zap } from 'lucide-react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { useParams, useNavigate, Link } from 'react-router-dom'
 import ProfileCard from '../components/profile/ProfileCard'
 import RepositoryCard from '../components/profile/RepositoryCard'
@@ -8,6 +8,7 @@ import { useGithubUser } from '../hooks/useGithubUser'
 import { languageColors } from '../lib/colors'
 import { useSearchHistoryStore } from '../store/useSearchHistoryStore'
 import { useAuthStore } from '../store/useAuthStore'
+import StackComparisonModal from '../components/profile/StackComparisonModal'
 
 const Profile = () => {
 	// =========================================================
@@ -90,8 +91,16 @@ const Profile = () => {
 	}, [allRepos])
 
 	// =========================================================
-	// 3. EFEITOS COLATERAIS (useEffect)
+	// 3. EFEITOS COLATERAIS (useState, useEffect)
 	// =========================================================
+
+	const [isComparisonOpen, setIsComparisonOpen] = useState(false)
+
+	const canCompare =
+		Boolean(data?.login) &&
+		profile?.user_type === 'developer' &&
+		Boolean(profile?.github_username) &&
+		profile?.github_username?.toLowerCase() !== data.login.toLowerCase()
 
 	// Salva a pesquisa atual no histórico global e padroniza a rota se necessário
 	useEffect(() => {
@@ -285,6 +294,17 @@ const Profile = () => {
 								</span>
 							))}
 						</div>
+
+						{canCompare && (
+							<button
+								type="button"
+								onClick={() => setIsComparisonOpen(true)}
+								className="btn btn-primary btn-xs flex items-center gap-1.5 cursor-pointer"
+							>
+								<Zap size={14} />
+								Comparar Stacks
+							</button>
+						)}
 					</div>
 
 					{/* Bloco 6.2.2: Resumo de Engajamento */}
@@ -336,6 +356,16 @@ const Profile = () => {
 						)}
 					</div>
 				</div>
+
+				{canCompare && profile?.github_username && (
+					<StackComparisonModal
+						isOpen={isComparisonOpen}
+						onClose={() => setIsComparisonOpen(false)}
+						myUsername={profile.github_username}
+						targetUsername={data.login}
+						targetStats={languageStats}
+					/>
+				)}
 			</main>
 		)
 	}
