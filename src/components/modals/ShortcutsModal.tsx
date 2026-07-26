@@ -1,7 +1,7 @@
-import { createPortal } from 'react-dom'
 import { useState, useEffect } from 'react'
-import { X, Keyboard, RotateCcw } from 'lucide-react'
+import { Keyboard, RotateCcw } from 'lucide-react'
 import { useShortcutsStore } from '../../store/useShortcutsStore'
+import Modal from '../ui/Modal'
 
 interface ShortcutModalProps {
 	isOpen: boolean
@@ -40,30 +40,14 @@ const ShortcutsModal = ({ isOpen, onClose }: ShortcutModalProps) => {
 	}, [isListening, setSearchShortcut])
 
 	if (!isOpen) return null
-	return createPortal(
-		<div
-			onClick={onClose}
-			className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4"
+	return (
+		<Modal
+			isOpen={isOpen}
+			onClose={onClose}
+			title="Atalhos de Teclado"
+			icon={<Keyboard className="text-primary-variant" size={20} />}
 		>
-			<div
-				onClick={(e) => e.stopPropagation()}
-				className="bg-base border border-outline rounded-xl w-full max-w-md p-6 flex flex-col gap-6 text-left shaodw-2xl"
-			>
-				{/* Cabeçalho */}
-				<div className="flex items-center justify-between border-b border-outline pb-4">
-					<div className="flex items-center gap-2 text-main font-sans text-lg font-bold">
-						<Keyboard size={20} className="text-primary-variant" />
-						<span>Atalhos de Teclado</span>
-					</div>
-					<button
-						type="button"
-						onClick={onClose}
-						className="text-muted hover:text-main cursor-pointer"
-					>
-						<X size={20} />
-					</button>
-				</div>
-
+			<div className="flex flex-col gap-6 text-left">
 				{/* Lista de atalhos */}
 				<div className="flex flex-col gap-4">
 					{/* Atalho 1: busca rápida */}
@@ -79,7 +63,11 @@ const ShortcutsModal = ({ isOpen, onClose }: ShortcutModalProps) => {
 						<button
 							type="button"
 							onClick={() => setIsListening(true)}
-							className={`btn btn-xs ${isListening ? 'btn-warning animate-pulse' : 'btn-outline border-outline text-main'} cursor-pointer`}
+							className={`btn btn-xs ${
+								isListening
+									? 'btn-warning animate-pulse'
+									: 'btn-outline border-outline text-main'
+							} cursor-pointer`}
 						>
 							{isListening ? (
 								'Pressione a tecla...'
@@ -95,7 +83,6 @@ const ShortcutsModal = ({ isOpen, onClose }: ShortcutModalProps) => {
 							)}
 						</button>
 					</div>
-
 					{/* Atalho 2: fechar modais (fixo) */}
 					<div className="flex items-center justify-between p-3 rounded-lg bg-base border border-outline opacity-75">
 						<div className="flex flex-col gap-0.5">
@@ -111,7 +98,6 @@ const ShortcutsModal = ({ isOpen, onClose }: ShortcutModalProps) => {
 						</kbd>
 					</div>
 				</div>
-
 				{/* Footer: Restaura padrões */}
 				<div className="flex justify-between items-center border-t border-outline pt-4">
 					<button
@@ -131,8 +117,7 @@ const ShortcutsModal = ({ isOpen, onClose }: ShortcutModalProps) => {
 					</button>
 				</div>
 			</div>
-		</div>,
-		document.body,
+		</Modal>
 	)
 }
 

@@ -1,8 +1,8 @@
-import { createPortal } from 'react-dom'
 import React, { useState, useEffect } from 'react'
-import { X, Settings, Code, Briefcase, AlertCircle } from 'lucide-react'
+import { Settings, Code, Briefcase, AlertCircle } from 'lucide-react'
 import { useAuthStore } from '../../store/useAuthStore'
 import { supabase } from '../../lib/supabase'
+import Modal from '../ui/Modal'
 
 interface AccountSettingsModalProps {
 	isOpen: boolean
@@ -81,30 +81,14 @@ const AccountSettingsModal = ({
 
 	if (!isOpen) return null
 
-	return createPortal(
-		<div
-			onClick={onClose}
-			className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4"
+	return (
+		<Modal
+			isOpen={isOpen}
+			onClose={onClose}
+			title="Configurações da Conta"
+			icon={<Settings className="text-primary-variant" size={20} />}
 		>
-			<div
-				onClick={(e) => e.stopPropagation()}
-				className="bg-surface border border-outline rounded-xl w-full max-w-md p-6 flex flex-col gap-6 text-left shadow-2xl"
-			>
-				{/* Cabeçalho */}
-				<div className="flex items-center justify-between border-b border-outline pb-4">
-					<div className="flex items-center gap-2 text-main font-sans text-lg font-bold">
-						<Settings size={20} className="text-primary-variant" />
-						<span>Configurações da Conta</span>
-					</div>
-					<button
-						type="button"
-						onClick={onClose}
-						className="text-muted hover:text-main cursor-pointer"
-					>
-						<X size={20} />
-					</button>
-				</div>
-
+			<div className="flex flex-col gap-5 text-left">
 				{/* Alerta de Erro */}
 				{error && (
 					<div className="flex items-center gap-2 p-3 bg-error/10 border border-error/20 text-error text-xs font-sans rounded-lg">
@@ -112,7 +96,6 @@ const AccountSettingsModal = ({
 						<span>{error}</span>
 					</div>
 				)}
-
 				<form onSubmit={handleSave} className="flex flex-col gap-5">
 					{/* Seleção do papel */}
 					<div className="flex flex-col gap-2">
@@ -123,7 +106,11 @@ const AccountSettingsModal = ({
 							<button
 								type="button"
 								onClick={() => setUserType('developer')}
-								className={`flex items-center justify-center gap-2 p-3 rounded-lg border text-xs font-sans font-semibold transition-all cursor-pointer ${userType === 'developer' ? 'border-primary-variant bg-primary-variant/10 text-main' : 'border-outline text-muted hover:border-outline-variant'}`}
+								className={`flex items-center justify-center gap-2 p-3 rounded-lg border text-xs font-sans font-semibold transition-all cursor-pointer ${
+									userType === 'developer'
+										? 'border-primary-variant bg-primary-variant/10 text-main'
+										: 'border-outline text-muted hover:border-outline-variant'
+								}`}
 							>
 								<Code size={16} />
 								Desenvolvedor
@@ -131,14 +118,17 @@ const AccountSettingsModal = ({
 							<button
 								type="button"
 								onClick={() => setUserType('recruiter')}
-								className={`flex items-center justify-center gap-2 p-3 rounded-lg border text-xs font-sans font-semibold transition-all cursor-pointer ${userType === 'recruiter' ? 'border-primary-variant bg-primary-variant/10 text-main' : 'border-outline text-muted hover:border-outline-variant'}`}
+								className={`flex items-center justify-center gap-2 p-3 rounded-lg border text-xs font-sans font-semibold transition-all cursor-pointer ${
+									userType === 'recruiter'
+										? 'border-primary-variant bg-primary-variant/10 text-main'
+										: 'border-outline text-muted hover:border-outline-variant'
+								}`}
 							>
 								<Briefcase size={16} />
 								Recrutador
 							</button>
 						</div>
 					</div>
-
 					{/* Campo GitHub (se for desenvolvedor) */}
 					{userType === 'developer' && (
 						<div className="flex flex-col gap-2">
@@ -158,7 +148,6 @@ const AccountSettingsModal = ({
 							/>
 						</div>
 					)}
-
 					{/* Footer */}
 					<div className="flex gap-2 justify-end border-t border-outline pt-4 mt-2">
 						<button
@@ -182,8 +171,7 @@ const AccountSettingsModal = ({
 					</div>
 				</form>
 			</div>
-		</div>,
-		document.body,
+		</Modal>
 	)
 }
 
