@@ -19,6 +19,7 @@ src/docs/
 .agents/
 .vscode/
 .impeccable/
+.claude/
 PRODUCT.md
 
 # Editor directories and files

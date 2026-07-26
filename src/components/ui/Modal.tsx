@@ -1,13 +1,15 @@
-import { useEffect } from 'react'
 import { X } from 'lucide-react'
+import { useEffect } from 'react'
 
 interface ModalProps {
 	isOpen: boolean
 	onClose: () => void
+	onEscape?: () => void
 	title?: string
 	icon?: React.ReactNode
 	children: React.ReactNode
-	maxWidth?: 'sm' | 'md' | 'lg' | 'xl' | '2xl'
+	maxWidth?: 'sm' | 'md' | 'lg' | 'xl' | '2xl' | '4xl'
+	className?: string
 }
 
 const maxWidthClasses = {
@@ -16,20 +18,23 @@ const maxWidthClasses = {
 	lg: 'max-w-lg',
 	xl: 'max-w-xl',
 	'2xl': 'max-w-2xl',
+	'4xl': 'max-w-4xl',
 }
 
 const Modal = ({
 	isOpen,
 	onClose,
+	onEscape,
 	title,
 	icon,
 	children,
 	maxWidth = 'md',
+	className = '',
 }: ModalProps) => {
 	useEffect(() => {
 		const handleKeyDown = (e: KeyboardEvent) => {
 			if (e.key === 'Escape') {
-				onClose()
+				onEscape ? onEscape() : onClose()
 			}
 		}
 
@@ -40,14 +45,14 @@ const Modal = ({
 		return () => {
 			window.removeEventListener('keydown', handleKeyDown)
 		}
-	}, [isOpen, onClose])
+	}, [isOpen, onClose, onEscape])
 
 	if (!isOpen) return null
 
 	return (
 		<div className="modal modal-open z-50">
 			<div
-				className={`modal-box bg-surface border border-outline rounded-xl p-6 shadow-2xl relative ${maxWidthClasses[maxWidth]}`}
+				className={`modal-box bg-surface border border-outline rounded-xl p-6 shadow-2xl relative ${maxWidthClasses[maxWidth]} ${className}`}
 			>
 				{/* Close Button */}
 				<button
