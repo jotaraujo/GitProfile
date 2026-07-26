@@ -1,12 +1,13 @@
-import { Building2, MapPin, Pin, Users } from 'lucide-react'
 import { useEffect, useState } from 'react'
+import { Building2, MapPin, Pin, Users } from 'lucide-react'
+import FollowersListModal from '../modals/FollowersListModal'
 import { usePinnedProfileStore } from '../../store/usePinnedProfileStore'
 import { useFollowStore } from '../../store/useFollowStore'
 import type { User, Candidate, Job } from '../../types/github'
 import { useCandidateStore } from '../../store/useCandidateStore'
 import { useAuthStore } from '../../store/useAuthStore'
-import { supabase } from '../../lib/supabase'
 import { useNotificationStore } from '../../store/useNotificationStore'
+import { supabase } from '../../lib/supabase'
 
 interface ProfileCardProps {
 	user: User
@@ -59,6 +60,10 @@ const ProfileCard = ({ user, isRecruiter }: ProfileCardProps) => {
 	const [activeTab, setActiveTab] = useState<'avaliacao' | 'anotacoes'>(
 		'avaliacao',
 	) // Controla a aba ativa no verso do card
+	const [isFollowerModalOpen, setIsFollowerModalOpen] = useState(false)
+	const [followersModalTab, setFollowersModalTab] = useState<
+		'followers' | 'following'
+	>()
 
 	// Busca reativa: procura se o candidato atual já possui triagem salva na store
 	const existingCandidate = candidates.find((c) => c.login === user.login)
@@ -149,6 +154,11 @@ const ProfileCard = ({ user, isRecruiter }: ProfileCardProps) => {
 				currentUser?.id,
 			)
 		}
+	}
+
+	const handleOpenFollowersModal = (tab: 'followers' | 'following') => {
+		setFollowersModalTab(tab)
+		setIsFollowerModalOpen(true)
 	}
 
 	// Cria uma nova vaga a partir do formulário inline e insere na store
@@ -308,14 +318,22 @@ const ProfileCard = ({ user, isRecruiter }: ProfileCardProps) => {
 							</button>
 						)}
 						<div className="flex gap-3 border-b-2 border-outline mb-4 py-4 w-full">
-							<p className="flex items-center gap-2 text-sm">
+							<button
+								type="button"
+								onClick={() => handleOpenFollowersModal('followers')}
+								className="flex items-center gap-2 text-sm hover:text-primary-variant transition-colors cursor-pointer"
+							>
 								<Users size={18} />
 								<span className="font-bold">{user.followers}</span> followers
-							</p>
+							</button>
 							<span className="text-sm px-3">•</span>
-							<p className="flex items-center gap-2 text-sm">
+							<button
+								type="button"
+								onClick={() => handleOpenFollowersModal('following')}
+								className="flex items-center gap-2 text-sm hover:text-primary-variant transition-colors cursor-pointer"
+							>
 								<span className="font-bold">{user.following}</span> following
-							</p>
+							</button>
 						</div>
 						<div className="flex gap-3 py-2 w-full">
 							{user.location && (
@@ -627,6 +645,12 @@ const ProfileCard = ({ user, isRecruiter }: ProfileCardProps) => {
 						</div>
 					)}
 				</div>
+				<FollowersListModal
+					isOpen={isFollowerModalOpen}
+					onClose={() => setIsFollowerModalOpen(false)}
+					username={user.login}
+					initialTab={followersModalTab}
+				/>
 			</div>
 		</>
 	)
