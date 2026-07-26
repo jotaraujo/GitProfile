@@ -1,9 +1,9 @@
-import { createPortal } from 'react-dom'
-import { X, Zap } from 'lucide-react'
+import { Zap } from 'lucide-react'
 import { compareStacks, type LanguageStat } from '../../utils/stackComparison'
 import { useGithubRepos } from '../../hooks/useGithubRepos'
 import { useMemo } from 'react'
 import { languageColors } from '../../lib/colors'
+import Modal from '../ui/Modal'
 
 interface StackComparisonProps {
 	isOpen: boolean
@@ -72,34 +72,14 @@ const StackComparisonModal = ({
 
 	if (!isOpen) return null
 
-	return createPortal(
-		<div
-			onClick={onClose}
-			className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4"
+	return (
+		<Modal
+			isOpen={isOpen}
+			onClose={onClose}
+			title={`@${myUsername} vs @${targetUsername}`}
+			icon={<Zap className="text-primary-variant" size={22} />}
 		>
-			{/* Container principal do modal */}
-			<div
-				onClick={(e) => e.stopPropagation()}
-				className="bg-base border border-outline rounded-xl w-full max-w-2xl relative p-6 flex flex-col gap-6 text-left max-h-[90vh] overflow-y-auto shadow-2xl no-scrollbar"
-			>
-				{/* Cabeçalho */}
-				<div className="flex items-center justify-between border-b border-outline pb-4">
-					<div className="flex items-center gap-2 text-main font-sans text-xl font-bold">
-						<Zap size={22} className="text-primary-variant" />
-						<span>
-							@{myUsername} <span className="text-muted font-normal">vs</span> @
-							{targetUsername}
-						</span>
-					</div>
-					<button
-						type="button"
-						onClick={onClose}
-						className="text-muted hover:text-main cursor-pointer"
-					>
-						<X size={20} />
-					</button>
-				</div>
-
+			<div className="flex flex-col gap-6 text-left max-h-[75vh] overflow-y-auto no-scrollbar">
 				{/* Card de afinidade e resumo */}
 				<div className="flex flex-col gap-3 bg-bright border border-outline p-4 rounded-lg">
 					<div className="flex items-center justify-between">
@@ -114,7 +94,6 @@ const StackComparisonModal = ({
 						{comparison.summaryText}
 					</p>
 				</div>
-
 				{/* Linguagens em comum */}
 				{comparison.commonLanguages.length > 0 && (
 					<div className="flex flex-col gap-2">
@@ -133,13 +112,11 @@ const StackComparisonModal = ({
 						</div>
 					</div>
 				)}
-
 				{/* Gráfico comparativo duplex (lado a lado) */}
 				<div className="flex flex-col gap-4">
 					<span className="text-xs font-mono text-muted uppercase tracking-wider">
 						Comparativo por Linguagem
 					</span>
-
 					<div className="flex flex-col gap-3">
 						{comparisonList.map((item) => (
 							<div
@@ -156,7 +133,6 @@ const StackComparisonModal = ({
 										{item.name}
 									</span>
 								</div>
-
 								{/* Barra 1: @myUsername */}
 								<div className="flex items-center gap-3 text-xs font-mono text-muted">
 									<span className="w-24 truncate">@{myUsername}</span>
@@ -170,7 +146,6 @@ const StackComparisonModal = ({
 										{item.myPercent.toFixed(1)}%
 									</span>
 								</div>
-
 								{/* Barra 2: Dev visitado (@targetUsername) */}
 								<div className="flex items-center gap-3 text-xs font-mono text-muted">
 									<span className="w-24 truncate">@{targetUsername}</span>
@@ -189,8 +164,7 @@ const StackComparisonModal = ({
 					</div>
 				</div>
 			</div>
-		</div>,
-		document.body,
+		</Modal>
 	)
 }
 

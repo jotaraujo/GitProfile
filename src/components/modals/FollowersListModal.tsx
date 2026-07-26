@@ -1,8 +1,9 @@
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { Users, X } from 'lucide-react'
+import { Users } from 'lucide-react'
 import { useAuthStore } from '../../store/useAuthStore'
 import { useFollowStore } from '../../store/useFollowStore'
+import Modal from '../ui/Modal'
 
 interface GithubUserSimple {
 	login: string
@@ -32,6 +33,12 @@ const FollowersListModal = ({
 	)
 	const [usersList, setUsersList] = useState<GithubUserSimple[]>([])
 	const [loading, setLoading] = useState(false)
+
+	useEffect(() => {
+		if (initialTab) {
+			setActiveTab(initialTab)
+		}
+	}, [initialTab])
 
 	useEffect(() => {
 		if (!isOpen || !username) return
@@ -66,41 +73,35 @@ const FollowersListModal = ({
 		}
 	}
 
-	if (!isOpen) return null
-
 	return (
-		<div className="modal modal-open">
-			<div className="modal-box relative bg-surface border border-outline roudend-xl max-w-md w-full p-6 shadow-2xl">
-				{/* Close Button */}
-				<button
-					type="button"
-					onClick={onClose}
-					className="btn btn-circle btn-sm absolute right-4 top-4 border-none bg-transparent hover:bg-bright text-muted hover:text-main cursor-pointer"
-				>
-					<X size={18} />
-				</button>
-
-				{/* Cabeçalho */}
-				<div className="flex items-center gap-2 mb-4">
-					<Users className="text-primary-variant" size={20} />
-					<h3 className="text-lg font-bold text-main font-sans">
-						Conexões de @{username}
-					</h3>
-				</div>
-
+		<Modal
+			isOpen={isOpen}
+			onClose={onClose}
+			title={`Conexões de @${username}`}
+			icon={<Users size={20} className="text-primary-variant" />}
+		>
+			<div className="flex flex-col text-left">
 				{/* Abas: Followers / Following */}
 				<div className="flex border-b border-outline mb-4">
 					<button
 						type="button"
 						onClick={() => setActiveTab('followers')}
-						className={`flex-1 py-2 text-center text-sm font-semibold border-b-2 transition-colors cursor-pointer ${activeTab === 'followers' ? 'border-primary-variant text-primary-variant' : 'border-transparent text-muted hover:text-main'}`}
+						className={`flex-1 py-2 text-center text-sm font-semibold border-b-2 transition-colors cursor-pointer ${
+							activeTab === 'followers'
+								? 'border-primary-variant text-primary-variant'
+								: 'border-transparent text-muted hover:text-main'
+						}`}
 					>
 						Seguidores (Followers)
 					</button>
 					<button
 						type="button"
 						onClick={() => setActiveTab('following')}
-						className={`flex-1 py-2 text-center text-sm font-semibold border-b-2 transition-colors cursor-pointer ${activeTab === 'following' ? 'border-primary-variant text-primary-variant' : 'border-transparent text-muted hover:text-main'}`}
+						className={`flex-1 py-2 text-center text-sm font-semibold border-b-2 transition-colors cursor-pointer ${
+							activeTab === 'following'
+								? 'border-primary-variant text-primary-variant'
+								: 'border-transparent text-muted hover:text-main'
+						}`}
 					>
 						Seguindo (Following)
 					</button>
@@ -149,7 +150,11 @@ const FollowersListModal = ({
 										<button
 											type="button"
 											onClick={() => handleFollow(dev.login, followingDev)}
-											className={`btn btn-xs ${followingDev ? 'btn-primary text-main' : 'btn-outline border-outline hover:bg-primary hover:text-main'}`}
+											className={`btn btn-xs ${
+												followingDev
+													? 'btn-primary text-main'
+													: 'btn-outline border-outline hover:bg-primary hover:text-main'
+											}`}
 										>
 											{followingDev ? 'Following' : 'Follow'}
 										</button>
@@ -160,11 +165,7 @@ const FollowersListModal = ({
 					)}
 				</div>
 			</div>
-			<div
-				className="modal-backdrop bg-black/60 backdrop-blur-sm"
-				onClick={onClose}
-			/>
-		</div>
+		</Modal>
 	)
 }
 
