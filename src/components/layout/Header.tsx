@@ -2,7 +2,6 @@ import { Link, useNavigate } from 'react-router-dom'
 import { useEffect, useRef, useState } from 'react'
 import {
 	Bell,
-	Plus,
 	Search,
 	AlertCircle,
 	X,
@@ -17,6 +16,8 @@ import AccountSettingsModal from '../modals/AccountSettingsModal'
 import ShortcutsModal from '../modals/ShortcutsModal'
 import { z } from 'zod'
 import Logo from '../../assets/logo.svg?react'
+import { useNotificationStore } from '../../store/useNotificationStore'
+import NotificationPopover from './NotificationPopover'
 
 const searchSchema = z
 	.string()
@@ -31,6 +32,7 @@ const searchSchema = z
 const Header = () => {
 	const { user, profile, signOut } = useAuthStore()
 	const { searchShortcut } = useShortcutsStore()
+	const { unreadCount, fetchNotifications } = useNotificationStore()
 	const navigate = useNavigate()
 
 	const [isSearchOpen, setIsSearchOpen] = useState(false)
@@ -38,8 +40,15 @@ const Header = () => {
 	const [searchError, setSearchError] = useState<string | null>(null)
 	const [isSettingOpen, setIsSettingOpen] = useState(false)
 	const [isShortcutOpen, setIsShortcutOpen] = useState(false)
+	const [isNotificationsOpen, setIsNotificationsOpen] = useState(false)
 
 	const dropdownRef = useRef<HTMLDetailsElement>(null)
+
+	useEffect(() => {
+		if (user?.id) {
+			fetchNotifications(user.id)
+		}
+	}, [user?.id, fetchNotifications])
 
 	useEffect(() => {
 		const handleKeyDown = (e: KeyboardEvent) => {
@@ -163,12 +172,23 @@ const Header = () => {
 				{user ? (
 					<>
 						{/* Botões de Ações Rápidas (Apenas Usuário Logado) */}
-						<button className="btn btn-ghost btn-circle btn-sm text-main">
-							<Bell size={20}></Bell>
-						</button>
-						<button className="btn btn-ghost btn-circle btn-sm text-main">
-							<Plus size={20}></Plus>
-						</button>
+						<div className="relative">
+							<button
+								type="button"
+								onClick={() => setIsNotificationsOpen((prev) => !prev)}
+								className="btn btn-ghost btn-circle btn-sm text-main relative hover:bg-bright cursor-pointer"
+							>
+								<Bell size={20} />
+								{unreadCount > 0 && (
+									<span className="absolute top-1 right-1 w-2.5 h-2.5 bg-error rounded-full ring-2 ring-surface" />
+								)}
+							</button>
+
+							<NotificationPopover
+								isOpen={isNotificationsOpen}
+								onClose={() => setIsNotificationsOpen(false)}
+							/>
+						</div>
 
 						{/* Menu Dropdown de Opções e Logout */}
 						<details ref={dropdownRef} className="dropdown dropdown-end">

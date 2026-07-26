@@ -1,9 +1,12 @@
-import { Building2, MapPin, Pin, Users } from 'lucide-react'
 import { useEffect, useState } from 'react'
+import { Building2, MapPin, Pin, Users } from 'lucide-react'
+import FollowersListModal from '../modals/FollowersListModal'
 import { usePinnedProfileStore } from '../../store/usePinnedProfileStore'
+import { useFollowStore } from '../../store/useFollowStore'
 import type { User, Candidate, Job } from '../../types/github'
 import { useCandidateStore } from '../../store/useCandidateStore'
 import { useAuthStore } from '../../store/useAuthStore'
+import { useNotificationStore } from '../../store/useNotificationStore'
 import { supabase } from '../../lib/supabase'
 
 interface ProfileCardProps {
@@ -25,9 +28,13 @@ const date = (data: string) => {
 const ProfileCard = ({ user, isRecruiter }: ProfileCardProps) => {
 	// Hooks e ações da store de recrutamento global (Zustand)
 	const { user: currentUser, profile } = useAuthStore()
+	const { isFollowing, followUser, unfollowUser, fetchFollowedUsernames } =
+		useFollowStore()
+	const following = isFollowing(user.login)
 	const isOwnProfile =
 		Boolean(profile?.github_username) &&
 		profile?.github_username?.toLowerCase() === user.login.toLowerCase()
+	const { addNotification } = useNotificationStore()
 	const { isPinned, pinProfile, unpinProfile } = usePinnedProfileStore()
 	const {
 		candidates,
@@ -53,6 +60,10 @@ const ProfileCard = ({ user, isRecruiter }: ProfileCardProps) => {
 	const [activeTab, setActiveTab] = useState<'avaliacao' | 'anotacoes'>(
 		'avaliacao',
 	) // Controla a aba ativa no verso do card
+	const [isFollowerModalOpen, setIsFollowerModalOpen] = useState(false)
+	const [followersModalTab, setFollowersModalTab] = useState<
+		'followers' | 'following'
+	>()
 
 	// Busca reativa: procura se o candidato atual já possui triagem salva na store
 	const existingCandidate = candidates.find((c) => c.login === user.login)
@@ -85,6 +96,12 @@ const ProfileCard = ({ user, isRecruiter }: ProfileCardProps) => {
 			setActiveJobId(jobs[0]?.id || '')
 		}
 	}, [existingCandidate, jobs])
+
+	useEffect(() => {
+		if (currentUser?.id) {
+			fetchFollowedUsernames(currentUser.id)
+		}
+	}, [currentUser?.id, fetchFollowedUsernames])
 
 	// Alterna o estado de fixação do perfil no topo da página
 	const handlePinToggle = async () => {
@@ -120,6 +137,28 @@ const ProfileCard = ({ user, isRecruiter }: ProfileCardProps) => {
 		} catch (err) {
 			console.error('Erro ao sincronizar perfil salvo no supabase:', err)
 		}
+	}
+
+	const handleFollowToggle = async () => {
+		if (following) {
+			unfollowUser(user.login, currentUser?.id)
+		} else {
+			await followUser(user.login, currentUser?.id)
+
+			addNotification(
+				{
+					username: user.login,
+					avatarUrl: user.avatar_url,
+					message: 'Foi adicionado aos seus perfis seguidos!',
+				},
+				currentUser?.id,
+			)
+		}
+	}
+
+	const handleOpenFollowersModal = (tab: 'followers' | 'following') => {
+		setFollowersModalTab(tab)
+		setIsFollowerModalOpen(true)
 	}
 
 	// Cria uma nova vaga a partir do formulário inline e insere na store
@@ -269,18 +308,32 @@ const ProfileCard = ({ user, isRecruiter }: ProfileCardProps) => {
 						<p className="text-muted text-sm leading-relaxed mb-4">
 							{user.bio}
 						</p>
-						<button className="btn btn-outline w-full mb-4 hover:bg-primary hover:text-main">
-							Follow
-						</button>
+						{!isOwnProfile && (
+							<button
+								type="button"
+								onClick={handleFollowToggle}
+								className={`btn w-full mb-4 transition-all duration-200 cursor-pointer ${following ? 'btn-primary text-main' : 'btn-outline border-outline hover:bg-primary hover:text-main'}`}
+							>
+								{following ? 'Unfollow' : 'Follow'}
+							</button>
+						)}
 						<div className="flex gap-3 border-b-2 border-outline mb-4 py-4 w-full">
-							<p className="flex items-center gap-2 text-sm">
+							<button
+								type="button"
+								onClick={() => handleOpenFollowersModal('followers')}
+								className="flex items-center gap-2 text-sm hover:text-primary-variant transition-colors cursor-pointer"
+							>
 								<Users size={18} />
 								<span className="font-bold">{user.followers}</span> followers
-							</p>
+							</button>
 							<span className="text-sm px-3">•</span>
-							<p className="flex items-center gap-2 text-sm">
+							<button
+								type="button"
+								onClick={() => handleOpenFollowersModal('following')}
+								className="flex items-center gap-2 text-sm hover:text-primary-variant transition-colors cursor-pointer"
+							>
 								<span className="font-bold">{user.following}</span> following
-							</p>
+							</button>
 						</div>
 						<div className="flex gap-3 py-2 w-full">
 							{user.location && (
@@ -592,6 +645,12 @@ const ProfileCard = ({ user, isRecruiter }: ProfileCardProps) => {
 						</div>
 					)}
 				</div>
+				<FollowersListModal
+					isOpen={isFollowerModalOpen}
+					onClose={() => setIsFollowerModalOpen(false)}
+					username={user.login}
+					initialTab={followersModalTab}
+				/>
 			</div>
 		</>
 	)
