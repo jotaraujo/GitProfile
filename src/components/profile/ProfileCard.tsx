@@ -1,10 +1,12 @@
 import { Building2, MapPin, Pin, Users } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { usePinnedProfileStore } from '../../store/usePinnedProfileStore'
+import { useFollowStore } from '../../store/useFollowStore'
 import type { User, Candidate, Job } from '../../types/github'
 import { useCandidateStore } from '../../store/useCandidateStore'
 import { useAuthStore } from '../../store/useAuthStore'
 import { supabase } from '../../lib/supabase'
+import { useNotificationStore } from '../../store/useNotificationStore'
 
 interface ProfileCardProps {
 	user: User
@@ -25,9 +27,13 @@ const date = (data: string) => {
 const ProfileCard = ({ user, isRecruiter }: ProfileCardProps) => {
 	// Hooks e ações da store de recrutamento global (Zustand)
 	const { user: currentUser, profile } = useAuthStore()
+	const { isFollowing, followUser, unfollowUser, fetchFollowedUsernames } =
+		useFollowStore()
+	const following = isFollowing(user.login)
 	const isOwnProfile =
 		Boolean(profile?.github_username) &&
 		profile?.github_username?.toLowerCase() === user.login.toLowerCase()
+	const { addNotification } = useNotificationStore()
 	const { isPinned, pinProfile, unpinProfile } = usePinnedProfileStore()
 	const {
 		candidates,
@@ -86,6 +92,12 @@ const ProfileCard = ({ user, isRecruiter }: ProfileCardProps) => {
 		}
 	}, [existingCandidate, jobs])
 
+	useEffect(() => {
+		if (currentUser?.id) {
+			fetchFollowedUsernames(currentUser.id)
+		}
+	}, [currentUser?.id, fetchFollowedUsernames])
+
 	// Alterna o estado de fixação do perfil no topo da página
 	const handlePinToggle = async () => {
 		if (pinned) {
@@ -119,6 +131,23 @@ const ProfileCard = ({ user, isRecruiter }: ProfileCardProps) => {
 			}
 		} catch (err) {
 			console.error('Erro ao sincronizar perfil salvo no supabase:', err)
+		}
+	}
+
+	const handleFollowToggle = async () => {
+		if (following) {
+			unfollowUser(user.login, currentUser?.id)
+		} else {
+			await followUser(user.login, currentUser?.id)
+
+			addNotification(
+				{
+					username: user.login,
+					avatarUrl: user.avatar_url,
+					message: 'Foi adicionado aos seus perfis seguidos!',
+				},
+				currentUser?.id,
+			)
 		}
 	}
 
@@ -269,9 +298,15 @@ const ProfileCard = ({ user, isRecruiter }: ProfileCardProps) => {
 						<p className="text-muted text-sm leading-relaxed mb-4">
 							{user.bio}
 						</p>
-						<button className="btn btn-outline w-full mb-4 hover:bg-primary hover:text-main">
-							Follow
-						</button>
+						{!isOwnProfile && (
+							<button
+								type="button"
+								onClick={handleFollowToggle}
+								className={`btn w-full mb-4 transition-all duration-200 cursor-pointer ${following ? 'btn-primary text-main' : 'btn-outline border-outline hover:bg-primary hover:text-main'}`}
+							>
+								{following ? 'Unfollow' : 'Follow'}
+							</button>
+						)}
 						<div className="flex gap-3 border-b-2 border-outline mb-4 py-4 w-full">
 							<p className="flex items-center gap-2 text-sm">
 								<Users size={18} />

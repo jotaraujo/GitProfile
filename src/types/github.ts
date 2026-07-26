@@ -54,6 +54,38 @@ export interface SearchHistoryState {
 	fetchHistory(userId?: string): Promise<void>
 }
 
+export interface FollowState {
+	followedUsernames: string[]
+	loading: boolean
+	followUser: (targetUsername: string, userId?: string) => Promise<void>
+	unfollowUser: (targetUsername: string, userId?: string) => Promise<void>
+	fetchFollowedUsernames: (userId?: string) => Promise<void>
+	isFollowing: (targetUsername: string) => boolean
+}
+
+export interface AppNotification {
+	id: string
+	username: string
+	avatarUrl: string
+	message: string
+	repoName?: string
+	createdAt: string
+	read: boolean
+}
+
+export interface NotificationState {
+	notifications: AppNotification[]
+	unreadCount: number
+	fetchNotifications: (userId?: string) => Promise<void>
+	addNotification: (
+		item: Omit<AppNotification, 'id' | 'createdAt' | 'read'>,
+		userId?: string,
+	) => Promise<void>
+	markAsRead: (id: string) => void
+	markAllAsRead: (userId?: string) => Promise<void>
+	clearNotifications: (userId?: string) => Promise<void>
+}
+
 // Informações básicas mantidas para um desenvolvedor fixado (Pinned)
 export interface PinnedProfile {
 	login: string
