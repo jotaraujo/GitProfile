@@ -1,4 +1,5 @@
 import { Zap } from 'lucide-react'
+import Button from '../ui/Button'
 
 interface LanguageStat {
 	name: string
@@ -58,14 +59,14 @@ const StackDistributionCard = ({
 
 			{/* Botão de Comparar Stacks */}
 			{canCompare && (
-				<button
-					type="button"
+				<Button
+					variant="primary"
+					size="xs"
+					icon={<Zap size={14} />}
 					onClick={onCompare}
-					className="btn btn-primary btn-xs flex items-center gap-1.5 cursor-pointer"
 				>
-					<Zap size={14} />
 					Comparar Stacks
-				</button>
+				</Button>
 			)}
 		</div>
 	)

@@ -18,6 +18,7 @@ import { z } from 'zod'
 import Logo from '../../assets/logo.svg?react'
 import { useNotificationStore } from '../../store/useNotificationStore'
 import NotificationPopover from './NotificationPopover'
+import IconButton from '../ui/IconButton'
 
 const searchSchema = z
 	.string()
@@ -160,29 +161,23 @@ const Header = () => {
 			{/* PAINEL DO USUÁRIO / AUTENTICAÇÃO */}
 			<div className="navbar-end gap-3 px-6">
 				{/* Botão de busca rápida */}
-				<button
-					type="button"
+				<IconButton
+					icon={<Search size={20} />}
 					onClick={() => setIsSearchOpen(true)}
-					className="btn btn-ghost btn-circle btn-sm text-sm hover:bg-bright"
+					tooltip="Abrir busca rápida"
 					aria-label="Abrir busca rápida"
-				>
-					<Search size={20} />
-				</button>
+				/>
 
 				{user ? (
 					<>
 						{/* Botões de Ações Rápidas (Apenas Usuário Logado) */}
 						<div className="relative">
-							<button
-								type="button"
+							<IconButton
+								icon={<Bell size={20} />}
+								badge={unreadCount}
 								onClick={() => setIsNotificationsOpen((prev) => !prev)}
-								className="btn btn-ghost btn-circle btn-sm text-main relative hover:bg-bright cursor-pointer"
-							>
-								<Bell size={20} />
-								{unreadCount > 0 && (
-									<span className="absolute top-1 right-1 w-2.5 h-2.5 bg-error rounded-full ring-2 ring-surface" />
-								)}
-							</button>
+								tooltip="Notificações"
+							/>
 
 							<NotificationPopover
 								isOpen={isNotificationsOpen}

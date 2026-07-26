@@ -8,6 +8,8 @@ import type { User } from '../../types/github'
 import { useAuthStore } from '../../store/useAuthStore'
 import { useNotificationStore } from '../../store/useNotificationStore'
 import { supabase } from '../../lib/supabase'
+import Button from '../ui/Button'
+import IconButton from '../ui/IconButton'
 
 interface ProfileCardProps {
 	user: User
@@ -128,15 +130,15 @@ const ProfileCard = ({ user, isRecruiter }: ProfileCardProps) => {
 							<h1 className="text-main font-sans text-2xl font-bold mt-4 mb-2">
 								{user.name}
 							</h1>
-							<button
-								type="button"
+							<IconButton
+								icon={
+									<Pin size={18} className={pinned ? 'fill-current' : ''} />
+								}
 								onClick={handlePinToggle}
-								className={`mt-2 p-2 rounded-lg border transition-all duration-200 cursor-pointer ${pinned ? 'bg-primary-variant/20 border-primary-variant text-primary-variant' : 'bg-transparent border-outline hover:bg-bright text-muted hover:text-main'} `}
-								title={pinned ? 'Desfixar perfil' : 'Fixar perfil'}
+								tooltip={pinned ? 'Desfixar perfil' : 'Fixar perfil'}
 								aria-pressed={pinned}
-							>
-								<Pin size={18} className={pinned ? 'fill-current' : ''} />
-							</button>
+								className={`mt-2 rounded-lg border ${pinned ? 'bg-primary-variant/20 border-primary-variant text-primary-variant' : 'bg-transparent border-outline hover:bg-bright text-muted hover:text-main'}`}
+							/>
 						</div>
 						<div className="flex items-center gap-2">
 							<h2 className="text-primary font-mono text-sm mb-3">
@@ -155,13 +157,14 @@ const ProfileCard = ({ user, isRecruiter }: ProfileCardProps) => {
 							{user.bio}
 						</p>
 						{!isOwnProfile && (
-							<button
-								type="button"
+							<Button
+								variant={following ? 'primary' : 'outline'}
+								fullWidth
 								onClick={handleFollowToggle}
-								className={`btn w-full mb-4 transition-all duration-200 cursor-pointer ${following ? 'btn-primary text-main' : 'btn-outline border-outline hover:bg-primary hover:text-main'}`}
+								className="mb-4"
 							>
 								{following ? 'Unfollow' : 'Follow'}
-							</button>
+							</Button>
 						)}
 						<div className="flex gap-3 border-b-2 border-outline mb-4 py-4 w-full">
 							<button
@@ -201,12 +204,14 @@ const ProfileCard = ({ user, isRecruiter }: ProfileCardProps) => {
 							)}
 						</div>
 						{isRecruiter && (
-							<button
-								className="btn btn-outline w-full mt-4 hover:bg-primary hover:text-main"
+							<Button
+								variant="outline"
+								fullWidth
 								onClick={() => setIsFlipped(true)}
+								className="mt-4"
 							>
 								Anotações de Triagem
-							</button>
+							</Button>
 						)}
 					</div>
 					{/* =========================================================
