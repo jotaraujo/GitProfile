@@ -31,7 +31,7 @@ const AccountSettingsModal = ({
 		}
 	}, [profile])
 
-	const handleSave = async (e: React.FormEvent) => {
+	const handleSave = async (e: React.ChangeEvent) => {
 		e.preventDefault()
 		if (!user) return
 
@@ -52,7 +52,7 @@ const AccountSettingsModal = ({
 			const cleanUsername =
 				userType === 'developer' ? githubUsername.trim() : null
 
-			const { error: dbError } = await supabase
+			const { error } = await supabase
 				.from('user_profiles')
 				.update({
 					user_type: userType,
@@ -61,7 +61,7 @@ const AccountSettingsModal = ({
 				})
 				.eq('id', user.id)
 
-			if (dbError) throw dbError
+			if (error) throw error
 
 			setProfile({
 				id: user.id,
