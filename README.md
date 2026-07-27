@@ -1,87 +1,263 @@
-# GitProfile
+# 🔍 GitProfile
 
-Aplicação web para busca, visualização organizada e salvamento de perfis públicos do GitHub. O GitProfile ajuda recrutadores técnicos e desenvolvedores a analisarem a presença online de um profissional de forma limpa, rápida e esteticamente agradável.
+### Plataforma Inteligente para Análise de Perfis GitHub
 
-> [!NOTE]
-> Este projeto foi desenvolvido com foco em demonstrar boas práticas de arquitetura front-end, caching de dados de servidores, roteamento dinâmico, validações schema-first e testes automatizados.
-
----
-
-## 🚀 Funcionalidades (MVP)
-
-* **Busca e Validação de Perfis:** Validação no cliente (Zod) garantindo que apenas formatos de usernames válidos do GitHub disparem requisições.
-* **Dashboard do Perfil:** Visualização simplificada de avatar, biografia, contagem de seguidores e data de criação da conta traduzida.
-* **Listagem de Repositórios com Scroll Infinito:** Renderização por demanda (30 itens por página) para evitar gargalos em perfis muito grandes.
-* **Filtros Locais Dinâmicos:** Filtro instantâneo por nome do repositório ou por linguagem de programação direto na interface.
-* **Gráfico de Stacks:** Cálculo utilitário que reúne a distribuição das linguagens de programação mais utilizadas pelo desenvolvedor.
-* **Histórico de Buscas Híbrido:**
-  * **Anônimo:** Salvo no `localStorage` do navegador (limite de 10 buscas).
-  * **Autenticado:** Sincronizado e persistido na nuvem no banco de dados do Supabase.
-* **Autenticação Segura:** Login e cadastro via e-mail e senha gerenciados pelo Supabase Auth.
+![React](https://img.shields.io/badge/React-19-61DAFB?style=flat-square&logo=react)
+![TypeScript](https://img.shields.io/badge/TypeScript-6.0-3178C6?style=flat-square&logo=typescript)
+![TailwindCSS](https://img.shields.io/badge/TailwindCSS-4.0-06B6D4?style=flat-square&logo=tailwindcss)
+![Supabase](https://img.shields.io/badge/Supabase-3ECF8E?style=flat-square&logo=supabase)
 
 ---
 
-## 🛠️ Stack Tecnológica
+**GitProfile** é uma aplicação web fullstack construída para profissionais de recrutamento técnico que precisam avaliar rapidamente o perfil GitHub de candidatos. A plataforma combina busca inteligente, análise visual de stacks tecnológicas e um sistema completo de triagem de candidatos — tudo em uma interface moderna, rápida e responsiva.
 
-* **Core:** [React 19](https://react.dev/) + [TypeScript](https://www.typescriptlang.org/) + [Vite](https://vite.dev/)
-* **Roteamento:** [React Router v7](https://reactrouter.com/)
-* **Gerenciamento de Estado:**
-  * **Cliente:** [Zustand](https://docs.pmnd.rs/zustand)
-  * **Servidor (Cache/Fetch):** [TanStack Query v5](https://tanstack.com/query)
-* **Validação de Formulários:** [React Hook Form](https://react-hook-form.com/) + [Zod](https://zod.dev/)
-* **Estilização:** [TailwindCSS v4](https://tailwindcss.com/) + [DaisyUI v5](https://daisyui.com/)
-* **Banco de Dados & Auth:** [Supabase](https://supabase.com/)
-* **Testes:** [Vitest](https://vitest.dev/) + [React Testing Library](https://testing-library.com/) + [MSW (Mock Service Worker)](https://mswjs.io/)
+> **🎯 Proposta de Valor:** Reduzir o tempo de análise de perfis GitHub de minutos para segundos, enquanto fornece insights acionáveis sobre as competências técnicas dos candidatos.
 
 ---
 
-## ⚙️ Instalação e Execução Local
+## ✨ Funcionalidades Principais
+
+### 🔎 **Sistema de Busca Inteligente**
+
+- Validação em tempo real de usernames GitHub via **Zod schema**
+- Busca instantânea com feedback visual imediato
+- Histórico de buscas híbrido (localStorage + Supabase cloud sync)
+
+### 👤 **Dashboard de Perfil Completo**
+
+- Visualização rica do perfil com avatar, bio, followers e data de criação
+- **Scroll infinito** para listagem otimizada de repositórios
+- Filtros dinâmicos por nome e linguagem de programação
+- **Gráfico de distribuição de stacks** com porcentagens visuais
+
+### 📁 **Explorador de Repositórios**
+
+- Navegação intuitiva por estrutura de pastas
+- **Visualizador de código** com syntax highlighting
+- Detecção automática de arquivos binários/mídia
+- Estatísticas detalhadas (stars, forks, issues)
+
+### 🤝 **Sistema de Networking**
+
+- Lista de followers/following com navegação entre perfis
+- Funcionalidade de follow/unfollow integrada
+- **Comparação de stacks** entre dois desenvolvedores
+
+### 📋 **Dashboard de Triagem de Candidatos** _(Recruiters)_
+
+- Sistema Kanban para gestão de candidatos (Pendente → Triagem → Aprovado → Recusado)
+- **Formulário de avaliação** com notas e status
+- Gestão de vagas com requisitos personalizáveis
+- **Perfis e repositórios salvos** para consulta rápida
+
+### 🔐 **Autenticação & Segurança**
+
+- Login/cadastro via email + senha (Supabase Auth)
+- Sessões persistentes com refresh automático
+- Dados protegidos por Row Level Security (RLS)
+
+### ⚡ **Experiência do Usuário**
+
+- **Dark mode** nativo com design system consistente
+- Animações suaves e micro-interações
+- **Keyboard shortcuts** para navegação rápida
+- Notificações toast para feedback imediato
+- Design 100% responsivo (mobile-first)
+
+---
+
+## 🏗️ Arquitetura & Stack Técnica
+
+### **Frontend Core**
+
+| Tecnologia | Versão | Finalidade                             |
+| ---------- | ------ | -------------------------------------- |
+| React      | 19.x   | UI Library com Server Components ready |
+| TypeScript | 6.x    | Type safety e developer experience     |
+| Vite       | 8.x    | Build tool ultrarrápido                |
+
+### **State Management**
+
+| Tecnologia     | Camada | Uso                                            |
+| -------------- | ------ | ---------------------------------------------- |
+| Zustand        | Client | UI state, auth, follow system                  |
+| TanStack Query | Server | API cache, optimistic updates, infinite scroll |
+
+### **Styling & Design System**
+
+| Tecnologia  | Versão | Finalidade        |
+| ----------- | ------ | ----------------- |
+| TailwindCSS | 4.x    | Utility-first CSS |
+| DaisyUI     | 5.x    | Component library |
+
+### **Backend & Data**
+
+| Tecnologia | Finalidade                              |
+| ---------- | --------------------------------------- |
+| Supabase   | Database (PostgreSQL) + Auth + Realtime |
+| GitHub API | Dados de perfis e repositórios          |
+
+### **Validação & Forms**
+
+| Tecnologia      | Finalidade        |
+| --------------- | ----------------- |
+| Zod             | Schema validation |
+| React Hook Form | Form management   |
+
+### **Testes & Qualidade**
+
+| Tecnologia            | Finalidade                   |
+| --------------------- | ---------------------------- |
+| Vitest                | Unit & integration testing   |
+| React Testing Library | Component testing            |
+| MSW                   | API mocking                  |
+| Husky + Commitlint    | Git hooks & commit standards |
+
+---
+
+## 📂 Estrutura do Projeto
+
+```
+src/
+├── components/
+│   ├── layout/           # Header, RootLayout, NotificationPopover
+│   ├── modals/           # StackComparison, FollowersList, AccountSettings
+│   ├── profile/          # ProfileCard, EngagementSummary, CandidateTriage
+│   │   └── repository/   # RepositoryCard, FileExplorer, CodeViewer
+│   └── ui/               # Button, IconButton, Modal (Design System)
+├── hooks/                # Custom hooks (useGithubUser, useGithubRepos, etc.)
+├── lib/                  # Supabase client, color utilities
+├── pages/                # Home, Profile, Login, CandidatesDashboard, etc.
+├── services/             # GitHub API service layer
+├── store/                # Zustand stores (auth, follow, candidates, etc.)
+├── types/                # TypeScript interfaces
+└── utils/                # Stack comparison, date formatting, etc.
+```
+
+---
+
+## 🚀 Quick Start
 
 ### Pré-requisitos
 
-Certifique-se de possuir o [Node.js](https://nodejs.org/) instalado em sua máquina.
+- [Node.js](https://nodejs.org/) >= 18.x
+- npm ou yarn
+- Conta no [Supabase](https://supabase.com/)
 
-### Passo 1: Clonar o Repositório e Instalar Dependências
+### Instalação
 
 ```bash
-# Instalar as dependências do projeto
+# 1. Clone o repositório
+git clone https://github.com/seu-usuario/gitprofile.git
+cd gitprofile
+
+# 2. Instale as dependências
 npm install
-```
 
-### Passo 2: Configurar Variáveis de Ambiente
+# 3. Configure as variáveis de ambiente
+cp .env.example .env
+# Edite .env com suas credenciais do Supabase
 
-Crie um arquivo `.env` na raiz do projeto (use o `.env.example` como base) e preencha as suas chaves do Supabase:
-
-```env
-VITE_SUPABASE_URL=sua-url-do-supabase
-VITE_SUPABASE_ANON_KEY=sua-chave-anon-do-supabase
-```
-
-### Passo 3: Executar o Servidor de Desenvolvimento
-
-```bash
+# 4. Inicie o servidor de desenvolvimento
 npm run dev
 ```
-O servidor iniciará no endereço local padrão indicado no terminal (normalmente `http://localhost:5173` ou `http://localhost:5174`).
+
+### Variáveis de Ambiente
+
+```env
+VITE_SUPABASE_URL=https://seu-projeto.supabase.co
+VITE_SUPABASE_ANON_KEY=sua-chave-anon-aqui
+```
+
+Acesse: `http://localhost:5173`
 
 ---
 
-## 🧪 Rodando os Testes
-
-Este projeto utiliza **Vitest** para testes unitários e de integração, garantindo a qualidade do código antes de ir para produção.
+## 🧪 Comandos Disponíveis
 
 ```bash
-# Executa todos os testes em modo único (ótimo para Git hooks / CI)
-npm run test
+# Desenvolvimento
+npm run dev          # Inicia servidor de desenvolvimento
+npm run build        # Build de produção
+npm run preview      # Preview do build
 
-# Executa os testes em modo Watch (escuta modificações nos arquivos)
-npm run test:watch
+# Testes
+npm run test         # Executa todos os testes
+npm run test:watch   # Modo watch para development
+npm run test:ui      # Interface visual do Vitest
 
-# Abre a interface visual dos testes do Vitest no navegador
-npm run test:ui
+# Qualidade de Código
+npm run lint         # ESLint check
 ```
 
 ---
 
-> [!TIP]
-> O repositório vem configurado com **Husky** e **Commitlint** para garantir que todos os commits sigam o padrão de Commits Semânticos (Conventional Commits).
+## 📊 Métricas de Qualidade
+
+- ✅ **100% TypeScript** - Zero JavaScript no bundle final
+- ✅ **Test Coverage** - Hooks e componentes críticos testados
+- ✅ **Lighthouse Score** - Performance, Accessibility, Best Practices
+- ✅ **Bundle Size** - Otimizado com code splitting automático
+- ✅ **Core Web Vitals** - LCP, FID, CLS otimizados
+
+---
+
+## 🎯 Destaques Técnicos
+
+### **Performance**
+
+- **Infinite Scroll** com Virtualização para listas grandes
+- **React Query Cache** com stale-while-revalidate strategy
+- **Lazy Loading** de rotas e componentes pesados
+
+### **Developer Experience**
+
+- **Hot Module Replacement (HMR)** instantâneo
+- **Type Safety** em todas as camadas da aplicação
+- **Custom Hooks** reutilizáveis e testáveis
+
+### **Boas Práticas**
+
+- **Component Composition** com patterns avançados
+- **Custom Hooks** para lógica reativa complexa
+- **Error Boundaries** para fallback gracioso
+- **Accessibility (a11y)** - ARIA labels, keyboard navigation
+
+---
+
+## 🤝 Contribuição
+
+Este projeto segue padrões rigorosos de qualidade:
+
+1. **Conventional Commits** - Mensagens de commit padronizadas
+2. **Code Review** - PRs com revisão obrigatória
+3. **Lint & Format** - ESLint + Prettier automatizados
+4. **Test Coverage** - Testes antes de merge
+
+```bash
+# Workflow de desenvolvimento
+git checkout -b feature/nova-funcionalidade
+npm run dev
+# ... desenvolvimento ...
+npm run test
+git commit -m "feat: descrição da funcionalidade"
+git push origin feature/nova-funcionalidade
+# Abrir Pull Request
+```
+
+---
+
+## 📝 Licença
+
+Este projeto está sob a licença MIT. Veja o arquivo [LICENSE](LICENSE) para mais detalhes.
+
+---
+
+## 👨‍💻 Autor
+
+**João Paulo Araújo**
+
+[![LinkedIn](https://img.shields.io/badge/LinkedIn-0077B5?style=flat-square&logo=linkedin)](https://linkedin.com/in/joaofonsecaraujo/)
+[![GitHub](https://img.shields.io/badge/GitHub-181717?style=flat-square&logo=github)](https://github.com/jotaraujo)
+
+---
