@@ -1,5 +1,11 @@
 import { createClient } from '@supabase/supabase-js'
 
+console.log('[debug] URL:', import.meta.env.VITE_SUPABASE_URL?.slice(0, 20))
+console.log(
+	'[debug] KEY:',
+	import.meta.env.VITE_SUPABASE_ANON_KEY?.slice(0, 10),
+)
+
 const supabaseURL = import.meta.env.VITE_SUPABASE_URL
 const supabaseKey = import.meta.env.VITE_SUPABASE_ANON_KEY
 
