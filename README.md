@@ -52,9 +52,14 @@
 
 ### 🔐 **Autenticação & Segurança**
 
-- Login/cadastro via email + senha (Supabase Auth)
+- Login/cadastro via e-mail + senha (Supabase Auth)
+- Login social rápido via **OAuth (Google e GitHub)**
 - Sessões persistentes com refresh automático
-- Dados protegidos por Row Level Security (RLS)
+- Dados protegidos por **Row Level Security (RLS)**
+
+> [!IMPORTANT]
+> **Aviso de Teste no Ambiente de Demonstração (Supabase Free Tier):**
+> Devido às cotas do plano gratuito do Supabase, o disparo de e-mails transacionais de confirmação está limitado a **2 cadastros por hora**. Para testar a aplicação sem bloqueios ou tempo de espera, **recomendamos utilizar o Login Social via OAuth (Google ou GitHub)**.
 
 ### ⚡ **Experiência do Usuário**
 
@@ -247,17 +252,9 @@ git push origin feature/nova-funcionalidade
 
 ---
 
-## 📝 Licença
-
-Este projeto está sob a licença MIT. Veja o arquivo [LICENSE](LICENSE) para mais detalhes.
-
----
-
 ## 👨‍💻 Autor
 
 **João Paulo Araújo**
 
 [![LinkedIn](https://img.shields.io/badge/LinkedIn-0077B5?style=flat-square&logo=linkedin)](https://linkedin.com/in/joaofonsecaraujo/)
 [![GitHub](https://img.shields.io/badge/GitHub-181717?style=flat-square&logo=github)](https://github.com/jotaraujo)
-
----
