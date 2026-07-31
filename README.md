@@ -7,6 +7,8 @@
 ![TailwindCSS](https://img.shields.io/badge/TailwindCSS-4.0-06B6D4?style=flat-square&logo=tailwindcss)
 ![Supabase](https://img.shields.io/badge/Supabase-3ECF8E?style=flat-square&logo=supabase)
 
+![GitProfile Preview](public/preview.png)
+
 ---
 
 **GitProfile** é uma aplicação web fullstack construída para profissionais de recrutamento técnico que precisam avaliar rapidamente o perfil GitHub de candidatos. A plataforma combina busca inteligente, análise visual de stacks tecnológicas e um sistema completo de triagem de candidatos — tudo em uma interface moderna, rápida e responsiva.
