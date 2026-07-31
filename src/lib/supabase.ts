@@ -13,33 +13,86 @@ const warnOnce = () => {
 	}
 }
 
-// Cria um cliente fake que não crasha — qualquer chamada de método retorna
-// uma Promise resolvida com null (ou um objeto vazio), mantendo o app funcional
-// mesmo sem Supabase configurado.
-function createStubClient(): ReturnType<typeof createClient> {
-	return new Proxy(
-		{},
-		{
-			get(_target, prop) {
-				warnOnce()
+// Retorna uma Promise com shape { data, error } — padrão do Supabase
+function stubResult(data: unknown = null) {
+	return Promise.resolve({
+		data,
+		error: null,
+		count: null,
+		status: 200,
+		statusText: 'OK (stub)',
+	})
+}
 
-				// auth, storage, etc. — retorna outro proxy que também não crasha
-				if (typeof prop === 'string' && !prop.startsWith('_')) {
-					return createStubClient()
-				}
+// Query builder: encadeável (.eq().single()) e "awaitable"
+function createQueryBuilder() {
+	const promise = stubResult([])
+	return new Proxy(promise, {
+		get(target, prop) {
+			// Mantém o comportamento de Promise (await / .then)
+			if (prop === 'then') return target.then.bind(target)
+			if (prop === 'catch') return target.catch.bind(target)
+			if (prop === 'finally') return target.finally.bind(target)
 
-				// Funções: .auth.signOut(), .from('table').select('*'), etc.
-				if (prop === 'then') return undefined // não é Promise
-				return async (..._args: unknown[]) => ({
-					data: null,
-					error: null,
-					count: null,
-					status: 200,
-					statusText: 'OK (stub)',
-				})
-			},
+			// Métodos de query — todos retornam um novo query builder
+			if (typeof prop === 'string' && !prop.startsWith('_')) {
+				return () => createQueryBuilder()
+			}
+
+			return Reflect.get(target, prop as keyof typeof target)
 		},
-	) as unknown as ReturnType<typeof createClient>
+	}) as unknown as ReturnType<ReturnType<typeof createClient>['from']>
+}
+
+// Módulo auth
+function createAuthStub() {
+	return {
+		getSession: () => stubResult({ session: null }),
+		onAuthStateChange: () => ({
+			data: { subscription: { unsubscribe: () => {} } },
+		}),
+		signOut: () => stubResult(),
+		signUp: () => stubResult({ user: null, session: null }),
+		signInWithPassword: () => stubResult({ user: null, session: null }),
+		signInWithOAuth: () => stubResult({ provider: null }),
+		resetPasswordForEmail: () => stubResult(),
+		updateUser: () => stubResult({ user: null }),
+		getUser: () => stubResult({ user: null }),
+	}
+}
+
+// Módulo storage
+function createStorageStub() {
+	return {
+		from: () => ({
+			upload: () => stubResult({ path: null }),
+			download: () => stubResult(null),
+			list: () => stubResult([]),
+			getPublicUrl: () => ({ data: { publicUrl: '' } }),
+			remove: () => stubResult(),
+			move: () => stubResult(),
+			copy: () => stubResult(),
+			createSignedUrl: () => stubResult({ signedUrl: null }),
+		}),
+	}
+}
+
+// Cliente stub completo
+function createStubClient(): ReturnType<typeof createClient> {
+	warnOnce()
+	return {
+		auth: createAuthStub(),
+		storage: createStorageStub(),
+		from: () => createQueryBuilder(),
+		channel: () => ({
+			on: () => ({ subscribe: () => 'stub' }),
+			subscribe: () => 'stub',
+			unsubscribe: () => {},
+		}),
+		realtime: { channel: () => ({ on: () => ({ subscribe: () => {} }) }) },
+		rpc: () => stubResult(null),
+		functions: { invoke: () => stubResult(null) },
+	} as unknown as ReturnType<typeof createClient>
 }
 
 export const supabase =
