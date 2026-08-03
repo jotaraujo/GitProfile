@@ -1,0 +1,61 @@
+:root {
+	/* ——— Surfaces ——— */
+	--color-base: oklch(17% 0.016 250);
+	--color-surface: oklch(21% 0.018 250);
+	--color-bright: oklch(28% 0.022 250);
+	--color-outline: oklch(26% 0.018 250);
+	--color-outline-variant: oklch(34% 0.02 250);
+
+	/* ——— Text ——— */
+	--color-main: oklch(92% 0.012 250);
+	--color-muted: oklch(78% 0.02 250);
+
+	/* ——— Accent ——— */
+	--color-primary: oklch(82% 0.08 250);
+	--color-primary-variant: oklch(74% 0.14 250);
+	--color-focus: oklch(74% 0.14 250);
+
+	/* ——— Status ——— */
+	--color-secondary: oklch(70% 0.16 150);
+	--color-tertiary: oklch(82% 0.13 85);
+	--color-success: oklch(76% 0.16 150);
+	--color-error: oklch(68% 0.18 25);
+	--color-pending: oklch(88% 0.15 95);
+
+	/* ——— Type ——— */
+	--font-display: 'Geist', system-ui, sans-serif;
+	--font-body: 'Geist', system-ui, sans-serif;
+	--font-outlier: 'Geist Mono', ui-monospace, monospace;
+
+	/* ——— Spacing (4-pt) ——— */
+	--space-3xs: 0.125rem;
+	--space-2xs: 0.25rem;
+	--space-xs: 0.5rem;
+	--space-sm: 0.75rem;
+	--space-md: 1rem;
+	--space-lg: 1.5rem;
+	--space-xl: 2.5rem;
+	--space-2xl: 4rem;
+	--space-3xl: 6rem;
+
+	/* ——— Motion ——— */
+	--ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+	--ease-in: cubic-bezier(0.7, 0, 0.84, 0);
+	--ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+	--dur-micro: 120ms;
+	--dur-short: 220ms;
+	--dur-long: 420ms;
+
+	/* ——— Radius ——— */
+	--radius-card: 0.75rem;
+	--radius-field: 0.5rem;
+	--radius-pill: 999px;
+
+	/* ——— Elevation ——— */
+	--z-raised: 10;
+	--z-dropdown: 100;
+	--z-sticky: 200;
+	--z-modal: 400;
+	--z-toast: 500;
+	--z-tooltip: 600;
+}

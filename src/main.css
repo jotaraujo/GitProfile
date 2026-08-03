@@ -1,4 +1,5 @@
 @import 'tailwindcss';
+
 @plugin "daisyui" {
 	themes:
 		dark --default,
@@ -6,45 +7,125 @@
 }
 
 @theme {
-	--color-base: #0b141c; /*Cor de fundo de todas as páginas. */
-	--color-surface: #182028; /* Usada para cards de perfil, listagem de repositórios e caixas agrupadoras. */
-	--color-bright: #313a43; /* Para estados de hover em elementos de lista ou foco em inputs. */
-	--color-outline: #30363d; /* Para linhas de separação e grades. */
-	--color-outline-variant: #414752;
-	--color-primary: #a2c9ff;
-	--color-primary-variant: #58a6ff;
-	--color-secondary: #27a640;
-	--color-tertiary: #fabc45;
-	--color-success: #67df70;
-	--color-error: #93000a;
-	--color-pending: #fde248;
-	--color-main: #dae3ee; /* Usado para títulos e textos principais */
-	--color-muted: #c0c7d4; /* Usado para biografias, datas e contadores secundários. */
+	/* ——— Surfaces ——— */
+	--color-base: oklch(17% 0.016 250); /* fundo de todas as páginas */
+	--color-surface: oklch(21% 0.018 250); /* cards, agrupadores, modais */
+	--color-bright: oklch(28% 0.022 250); /* hover / foco de superfície */
+	--color-outline: oklch(26% 0.018 250); /* hairline e grades */
+	--color-outline-variant: oklch(34% 0.02 250); /* hairline forte */
 
+	/* ——— Text ——— */
+	--color-main: oklch(92% 0.012 250); /* títulos e texto principal */
+	--color-muted: oklch(78% 0.02 250); /* biografias, datas, contadores */
+
+	/* ——— Accent ——— */
+	--color-primary: oklch(82% 0.08 250); /* azul claro */
+	--color-primary-variant: oklch(74% 0.14 250); /* azul GitHub */
+
+	/* ——— Status ——— */
+	--color-secondary: oklch(70% 0.16 150); /* verde */
+	--color-tertiary: oklch(82% 0.13 85); /* âmbar — favoritos/stars */
+	--color-success: oklch(76% 0.16 150);
+	--color-error: oklch(68% 0.18 25); /* elevado para contraste no dark */
+	--color-pending: oklch(88% 0.15 95);
+
+	/* ——— Type ——— */
 	--font-sans: 'Geist', system-ui, sans-serif;
 	--font-mono: 'Geist Mono', ui-monospace, monospace;
+
+	/* ——— Motion ——— */
+	--ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+	--ease-in: cubic-bezier(0.7, 0, 0.84, 0);
+	--ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+	--dur-micro: 120ms;
+	--dur-short: 220ms;
+	--dur-long: 420ms;
+}
+
+/* ——— DaisyUI dark theme: override com a paleta da marca ——— */
+[data-theme='dark'] {
+	--color-base-100: oklch(17% 0.016 250);
+	--color-base-200: oklch(21% 0.018 250);
+	--color-base-300: oklch(28% 0.022 250);
+	--color-base-content: oklch(92% 0.012 250);
+	--color-primary: oklch(74% 0.14 250);
+	--color-primary-content: oklch(17% 0.016 250);
+	--color-secondary: oklch(70% 0.16 150);
+	--color-secondary-content: oklch(17% 0.016 250);
+	--color-accent: oklch(82% 0.08 250);
+	--color-accent-content: oklch(17% 0.016 250);
+	--color-neutral: oklch(28% 0.022 250);
+	--color-neutral-content: oklch(92% 0.012 250);
+	--color-info: oklch(74% 0.14 250);
+	--color-info-content: oklch(17% 0.016 250);
+	--color-success: oklch(76% 0.16 150);
+	--color-success-content: oklch(17% 0.016 250);
+	--color-warning: oklch(82% 0.13 85);
+	--color-warning-content: oklch(17% 0.016 250);
+	--color-error: oklch(68% 0.18 25);
+	--color-error-content: oklch(95% 0.01 25);
+	--radius-box: 0.75rem;
+	--radius-field: 0.5rem;
 }
 
 body {
 	background-color: var(--color-base);
-	color: var(--color-text-main);
+	color: var(--color-main);
 	margin: 0;
-	overflow: hidden;
+	overflow-x: clip;
+}
+
+html {
+	overflow-x: clip;
 }
 
 #root {
 	min-height: 100svh;
 }
 
-.no-scrollbar::-webkit-scrollbar {
-	display: none;
+/* ——— Focus: anel visível, instantâneo, ≥ 3:1 ——— */
+:focus-visible {
+	outline: 2px solid var(--color-primary-variant);
+	outline-offset: 2px;
 }
 
-.no-scrollbar {
-	-ms-overflow-style: none;
-	scrollbar-width: none;
+/* ——— Seleção ——— */
+::selection {
+	background-color: oklch(74% 0.14 250 / 0.25);
 }
 
+/* ——— Números em colunas: tabulares ——— */
+.tabular-nums {
+	font-variant-numeric: tabular-nums;
+}
+
+/* ——— Tipografia mono de micro-label (regras do sistema) ——— */
+.micro-label {
+	font-family: var(--font-mono);
+	font-size: 0.6875rem; /* 11px */
+	letter-spacing: 0.08em;
+	text-transform: uppercase;
+}
+
+/* ——— Scrollbars discretas, sem esconder o indicador ——— */
+* {
+	scrollbar-width: thin;
+	scrollbar-color: var(--color-outline-variant) transparent;
+}
+
+/* ——— Reduced motion: colapso global ——— */
+@media (prefers-reduced-motion: reduce) {
+	*,
+	*::before,
+	*::after {
+		animation-duration: 0.01ms !important;
+		animation-iteration-count: 1 !important;
+		transition-duration: 0.01ms !important;
+		scroll-behavior: auto !important;
+	}
+}
+
+/* ——— Flip card (perfil → triagem) ——— */
 .flip-container {
 	perspective: 1000px;
 }
@@ -53,7 +134,7 @@ body {
 	position: relative;
 	width: 100%;
 	height: 100%;
-	transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+	transition: transform 0.6s var(--ease-in-out);
 	transform-style: preserve-3d;
 }
 
@@ -75,4 +156,39 @@ body {
 	position: absolute;
 	inset: 0;
 	transform: rotateY(180deg);
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.flip-inner {
+		transition: none;
+	}
+}
+
+/* ——— Search pill (N13) ——— */
+.searchpill {
+	display: flex;
+	align-items: center;
+	gap: 0.6rem;
+	height: 2.5rem;
+	padding: 0 0.55rem 0 0.85rem;
+	background: var(--color-surface);
+	border: 1px solid var(--color-outline);
+	border-radius: var(--radius-pill);
+	color: var(--color-muted);
+	transition: border-color var(--dur-short) var(--ease-out);
+	cursor: pointer;
+}
+
+.searchpill:hover {
+	border-color: var(--color-outline-variant);
+}
+
+.searchpill kbd {
+	font-family: var(--font-mono);
+	font-size: 0.6875rem;
+	padding: 0.15rem 0.4rem;
+	border: 1px solid var(--color-outline-variant);
+	border-radius: 0.375rem;
+	background: var(--color-base);
+	color: var(--color-muted);
 }
