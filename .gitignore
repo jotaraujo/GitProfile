@@ -20,7 +20,12 @@ src/docs/
 .vscode/
 .impeccable/
 .claude/
+.hallmark/
+.playwright-mcp/
+.remember/
 PRODUCT.md
+design.md
+HALLMARK_AUDIT.md
 
 # Editor directories and files
 .idea
