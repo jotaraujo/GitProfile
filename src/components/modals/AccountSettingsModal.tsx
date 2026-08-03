@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from 'react'
-import { Settings, Code, Briefcase, AlertCircle } from 'lucide-react'
-import { useAuthStore } from '../../store/useAuthStore'
+import { AlertCircle, Briefcase, Code, Settings } from 'lucide-react'
+import React, { useEffect, useState } from 'react'
 import { supabase } from '../../lib/supabase'
+import { useAuthStore } from '../../store/useAuthStore'
 import Modal from '../ui/Modal'
 
 interface AccountSettingsModalProps {
@@ -106,7 +106,7 @@ const AccountSettingsModal = ({
 							<button
 								type="button"
 								onClick={() => setUserType('developer')}
-								className={`flex items-center justify-center gap-2 p-3 rounded-lg border text-xs font-sans font-semibold transition-all cursor-pointer ${
+								className={`flex items-center justify-center gap-2 p-3 rounded-lg border text-xs font-sans font-semibold transition-colors duration-200 cursor-pointer ${
 									userType === 'developer'
 										? 'border-primary-variant bg-primary-variant/10 text-main'
 										: 'border-outline text-muted hover:border-outline-variant'
@@ -118,7 +118,7 @@ const AccountSettingsModal = ({
 							<button
 								type="button"
 								onClick={() => setUserType('recruiter')}
-								className={`flex items-center justify-center gap-2 p-3 rounded-lg border text-xs font-sans font-semibold transition-all cursor-pointer ${
+								className={`flex items-center justify-center gap-2 p-3 rounded-lg border text-xs font-sans font-semibold transition-colors duration-200 cursor-pointer ${
 									userType === 'recruiter'
 										? 'border-primary-variant bg-primary-variant/10 text-main'
 										: 'border-outline text-muted hover:border-outline-variant'

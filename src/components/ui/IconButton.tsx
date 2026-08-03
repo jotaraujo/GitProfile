@@ -24,7 +24,7 @@ const IconButton = ({
 		<button
 			type="button"
 			title={tooltip}
-			className={`btn btn-ghost btn-circle ${sizeClasses[size]} text-main relative hover:bg-bright cursor-pointer ${className}`}
+			className={`btn btn-ghost btn-circle ${sizeClasses[size]} text-main relative hover:bg-bright transition-colors duration-200 active:scale-[0.96] ${className}`}
 			{...rest}
 		>
 			{icon}

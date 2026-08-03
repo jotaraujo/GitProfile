@@ -1,8 +1,8 @@
+import { Bookmark, ExternalLink, FolderGit2, Star, Trash2 } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
-import { useAuthStore } from '../store/useAuthStore'
 import { supabase } from '../lib/supabase'
-import { Bookmark, FolderGit2, Trash2, ExternalLink, Star } from 'lucide-react'
+import { useAuthStore } from '../store/useAuthStore'
 
 // Interface para perfis salvos (Tabela: saved_profiles)
 interface SavedProfileItem {
@@ -113,7 +113,7 @@ const Saved = () => {
 				<button
 					type="button"
 					onClick={() => setActiveTab('profiles')}
-					className={`flex items-center justify-center gap-2 py-2 px-3 text-xs md:text-sm font-sans font-semibold rounded-lg transition-all duration-300 ease-out active:scale-95 cursor-pointer ${activeTab === 'profiles' ? 'bg-base text-main shadow-md border border-outline-variant' : 'text-muted hover:text-main'}`}
+					className={`flex items-center justify-center gap-2 py-2 px-3 text-xs md:text-sm font-sans font-semibold rounded-lg transition-colors duration-200 cursor-pointer ${activeTab === 'profiles' ? 'bg-base text-main border border-outline-variant' : 'text-muted hover:text-main'}`}
 				>
 					<Bookmark size={16} />
 					Perfis ({savedProfiles.length})
@@ -122,7 +122,7 @@ const Saved = () => {
 				<button
 					type="button"
 					onClick={() => setActiveTab('repos')}
-					className={`flex items-center justify-center gap-2 py-2 px-3 text-xs md:text-sm font-sans font-semibold rounded-lg transition-all duration-300 ease-out active:scale-95 cursor-pointer ${activeTab === 'repos' ? 'bg-base text-main shadow-md border border-outline-variant' : 'text-muted hover:text-main'}`}
+					className={`flex items-center justify-center gap-2 py-2 px-3 text-xs md:text-sm font-sans font-semibold rounded-lg transition-colors duration-200 cursor-pointer ${activeTab === 'repos' ? 'bg-base text-main border border-outline-variant' : 'text-muted hover:text-main'}`}
 				>
 					<FolderGit2 size={16} />
 					Repositórios ({savedRepos.length})
@@ -154,7 +154,7 @@ const Saved = () => {
 								{savedProfiles.map((item) => (
 									<div
 										key={item.id}
-										className="bg-surface border border-outline hover:border-outline-variant p-4 rounded-lg flex items-center justify-between transition-all group"
+										className="bg-surface border border-outline hover:border-outline-variant p-4 rounded-lg flex items-center justify-between transition-colors duration-200 group"
 									>
 										<Link
 											to={`/profile/${item.github_username}`}
@@ -211,7 +211,7 @@ const Saved = () => {
 								{savedRepos.map((item) => (
 									<div
 										key={item.id}
-										className="flex flex-col justify-between gap-3 bg-surface border border-outline hover:border-outline-variant p-5 rounded-lg transition-all"
+										className="flex flex-col justify-between gap-3 bg-surface border border-outline hover:border-outline-variant p-5 rounded-lg transition-colors duration-200"
 									>
 										<div className="flex items-start justify-between gap-2">
 											<div>

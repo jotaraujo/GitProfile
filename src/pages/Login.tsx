@@ -1,14 +1,15 @@
-import { useState } from 'react'
-import { useSearchParams, useNavigate } from 'react-router-dom'
 import {
-	Mail,
-	Lock,
-	Code,
-	Briefcase,
 	AlertCircle,
+	Briefcase,
+	Code,
 	Eye,
 	EyeClosed,
+	Lock,
+	Mail,
 } from 'lucide-react'
+import { useState } from 'react'
+import { useNavigate, useSearchParams } from 'react-router-dom'
+import Logo from '../assets/logo.svg?react'
 import { supabase } from '../lib/supabase'
 
 // SVG do GitHub oficial
@@ -90,7 +91,7 @@ const Login = () => {
 	const [loading, setLoading] = useState(false)
 	const [error, setError] = useState<string | null>(null)
 
-	const handleSubmit = async (e: React.ChangeEvent) => {
+	const handleSubmit = async (e: React.ChangeEvent<HTMLFormElement>) => {
 		e.preventDefault()
 		setLoading(true)
 		setError(null)
@@ -163,237 +164,297 @@ const Login = () => {
 		}
 	}
 
+	const inputClass =
+		'input input-bordered bg-base border-outline text-sm text-main font-sans w-full pl-10 focus:border-primary-variant focus:outline-none'
+
 	return (
-		<div className="flex min-h-[calc(100svh-64px)] w-full items-center justify-center bg-base p-6">
-			<div className="bg-surface border border-outline rounded-lg p-8 max-w-md w-full flex flex-col gap-6 shadow-xl">
-				{/* Sessão de Título */}
-				<div className="text-center flex flex-col gap-2">
-					<h1 className="text-main font-sans font-bold text-2xl tracking-tight">
+		<div className="min-h-[calc(100svh-64px)] w-full bg-base lg:grid lg:grid-cols-2">
+			{/* Painel de marca — desktop */}
+			<aside className="hidden lg:flex flex-col justify-between p-12 border-r border-outline bg-surface/40">
+				<div className="flex items-center gap-2">
+					<Logo className="w-8 h-8" aria-hidden="true" />
+					<span className="text-lg font-bold text-main tracking-tight">
 						GitProfile
-					</h1>
-					<p className="text-muted text-sm font-sans">
-						Conecte-se para explorar e gerenciar perfis de candidatos
-					</p>
+					</span>
 				</div>
 
-				{/* Painel de Abas */}
-				<div className="grid grid-cols-2 bg-base p-1 rounded-xl border border-outline">
-					<button
-						type="button"
-						className={`py-2 text-sm font-sans font-semibold rounded-lg transition-all duration-200 cursor-pointer ${mode === 'login' ? 'bg-surface text-main shadow-md border border-outline-variant' : 'text-muted hover:text-main'}`}
-						onClick={() => setMode('login')}
-					>
-						Entrar
-					</button>
-					<button
-						type="button"
-						className={`py-2 text-sm font-sans font-semibold rounded-lg transition-all duration-200 cursor-pointer ${mode === 'register' ? 'bg-surface text-main shadow-md border border-outline-variant' : 'text-muted hover:text-main'}`}
-						onClick={() => setMode('register')}
-					>
-						Criar Conta
-					</button>
+				<div className="flex flex-col gap-6 max-w-sm">
+					<span className="micro-label text-primary-variant">
+						Para desenvolvedores e recrutadores
+					</span>
+					<h2 className="text-3xl font-bold leading-tight tracking-tight text-main">
+						Explore perfis, compare stacks, documente triagens.
+					</h2>
+					<ul className="flex flex-col gap-3 text-sm text-muted leading-relaxed">
+						<li>Busca em tempo real na API do GitHub</li>
+						<li>Comparação de stacks tecnológicas</li>
+						<li>Pipeline de triagem para recrutadores</li>
+					</ul>
 				</div>
 
-				{/* Card de Alerta de Erro */}
-				{error && (
-					<div className="flex items-center gap-3 p-4 bg-error/10 border border-error/20 text-error text-sm rounded-lg font-sans">
-						<AlertCircle size={16} className="flex-shrink-0" />
-						<span>{error}</span>
-					</div>
-				)}
+				<p className="text-xs font-mono text-muted">
+					gitprofile · dados públicos do GitHub
+				</p>
+			</aside>
 
-				{/* Formulário Principal */}
-				<form onSubmit={handleSubmit} className="flex flex-col gap-4">
-					{/* Campo E-mail */}
-					<div className="form-control w-full">
-						<label className="label py-1">
-							<span className="label-text text-muted font-sans text-xs font-semibold uppercase tracking-wider">
-								E-mail
-							</span>
-						</label>
-						<div className="relative flex items-center">
-							<Mail
-								size={18}
-								className="absolute left-3 text-muted pointer-events-none z-10"
-							/>
-							<input
-								type="email"
-								placeholder="Digite seu e-mail"
-								className="input input-bordered bg-base border-outline text-sm text-main font-sans w-full pl-10 focus:border-primary-variant focus:outline-none"
-								value={email}
-								onChange={({ target }) => setEmail(target.value)}
-								required
-							/>
+			{/* Painel do formulário */}
+			<div className="flex items-center justify-center p-6">
+				<div className="bg-surface border border-outline rounded-lg p-8 max-w-md w-full flex flex-col gap-6 shadow-xl">
+					{/* Sessão de Título */}
+					<div className="text-center flex flex-col gap-2">
+						<h1 className="text-main font-sans font-bold text-2xl tracking-tight">
+							GitProfile
+						</h1>
+						<p className="text-muted text-sm font-sans">
+							Conecte-se para explorar e gerenciar perfis de candidatos
+						</p>
+					</div>
+
+					{/* Painel de Abas */}
+					<div className="grid grid-cols-2 bg-base p-1 rounded-xl border border-outline">
+						<button
+							type="button"
+							className={`py-2 text-sm font-sans font-semibold rounded-lg transition-colors duration-200 cursor-pointer ${
+								mode === 'login'
+									? 'bg-surface text-main shadow-md border border-outline-variant'
+									: 'text-muted hover:text-main'
+							}`}
+							onClick={() => setMode('login')}
+						>
+							Entrar
+						</button>
+						<button
+							type="button"
+							className={`py-2 text-sm font-sans font-semibold rounded-lg transition-colors duration-200 cursor-pointer ${
+								mode === 'register'
+									? 'bg-surface text-main shadow-md border border-outline-variant'
+									: 'text-muted hover:text-main'
+							}`}
+							onClick={() => setMode('register')}
+						>
+							Criar Conta
+						</button>
+					</div>
+
+					{/* Card de Alerta de Erro */}
+					{error && (
+						<div className="flex items-center gap-3 p-4 bg-error/10 border border-error/20 text-error text-sm rounded-lg font-sans">
+							<AlertCircle size={16} className="flex-shrink-0" />
+							<span>{error}</span>
 						</div>
-					</div>
+					)}
 
-					{/* Campo Senha */}
-					<div className="form-control w-full">
-						<label className="label py-1">
-							<span className="label-text text-muted font-sans text-xs font-semibold uppercase tracking-wider">
-								Senha
-							</span>
-						</label>
-						<div className="relative flex items-center">
-							<Lock
-								size={18}
-								className="absolute left-3 text-muted pointer-events-none z-10"
-							/>
-							<input
-								type={showPassword ? 'text' : 'password'}
-								placeholder="Digite sua senha"
-								className="input input-bordered bg-base border-outline text-sm text-main font-sans w-full pl-10 focus:border-primary-variant focus:outline-none"
-								value={password}
-								onChange={({ target }) => setPassword(target.value)}
-								required
-							/>
-							<button
-								type="button"
-								onClick={() => setShowPassword(!showPassword)}
-								className="absolute right-3 text-muted hover:text-main focus:outline-none cursor-pointer z-10"
-							>
-								{showPassword ? <EyeClosed size={18} /> : <Eye size={18} />}
-							</button>
+					{/* Formulário Principal */}
+					<form onSubmit={handleSubmit} className="flex flex-col gap-4">
+						{/* Campo E-mail */}
+						<div className="form-control w-full">
+							<label className="label py-1">
+								<span className="label-text text-muted font-sans text-xs font-semibold uppercase tracking-wider">
+									E-mail
+								</span>
+							</label>
+							<div className="relative flex items-center">
+								<Mail
+									size={18}
+									className="absolute left-3 text-muted pointer-events-none z-10"
+								/>
+								<input
+									type="email"
+									placeholder="Digite seu e-mail"
+									className={inputClass}
+									value={email}
+									onChange={({ target }) => setEmail(target.value)}
+									required
+								/>
+							</div>
 						</div>
-					</div>
 
-					{/* Campos dinâmicos de cadastro */}
-					{mode === 'register' && (
-						<>
-							{/* Campo de confirmação da senha */}
-							<div className="form-control w-full">
-								<label className="label py-1">
-									<span className="label-text text-muted font-sans text-xs font-semibold uppercase tracking-wider">
-										Confirme a Senha
-									</span>
-								</label>
-								<div className="relative flex items-center">
-									<Lock
-										size={18}
-										className="absolute left-3 text-muted pointer-events-none z-10"
-									/>
-									<input
-										type={showConfirmPassword ? 'text' : 'password'}
-										placeholder="Digite sua senha novamente"
-										className="input input-bordered bg-base border-outline text-sm text-main font-sans w-full pl-10 focus:border-primary-variant focus:outline-none"
-										value={confirmPassword}
-										onChange={({ target }) => setConfirmPassword(target.value)}
-										required
-									/>
-									<button
-										type="button"
-										onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-										className="absolute right-3 text-muted hover:text-main focus:outline-none cursor-pointer z-10"
-									>
-										{showConfirmPassword ? (
-											<EyeClosed size={18} />
-										) : (
-											<Eye size={18} />
-										)}
-									</button>
-								</div>
+						{/* Campo Senha */}
+						<div className="form-control w-full">
+							<label className="label py-1">
+								<span className="label-text text-muted font-sans text-xs font-semibold uppercase tracking-wider">
+									Senha
+								</span>
+							</label>
+							<div className="relative flex items-center">
+								<Lock
+									size={18}
+									className="absolute left-3 text-muted pointer-events-none z-10"
+								/>
+								<input
+									type={showPassword ? 'text' : 'password'}
+									placeholder="Digite sua senha"
+									className={inputClass}
+									value={password}
+									onChange={({ target }) => setPassword(target.value)}
+									required
+								/>
+								<button
+									type="button"
+									onClick={() => setShowPassword(!showPassword)}
+									className="absolute right-3 text-muted hover:text-main transition-colors duration-200 cursor-pointer z-10"
+									aria-label={showPassword ? 'Ocultar senha' : 'Mostrar senha'}
+								>
+									{showPassword ? <EyeClosed size={18} /> : <Eye size={18} />}
+								</button>
 							</div>
+						</div>
 
-							{/* Campo seletor de tipo de usuário */}
-							<div className="form-control w-full">
-								<label className="label py-1">
-									<span className="label-text text-muted font-sans text-xs font-semibold uppercase tracking-wider">
-										Eu sou um:
-									</span>
-								</label>
-								<div className="grid grid-cols-2 gap-3">
-									<button
-										type="button"
-										className={`flex flex-col items-center justify-center p-3 rounded-lg border text-sm font-sans font-semibold transition-all cursor-pointer gap-2 ${userType === 'developer' ? 'border-primary bg-primary/10 text-main' : 'border-outline hover:border-outline-variant text-muted'}`}
-										onClick={() => setUserType('developer')}
-									>
-										<Code size={18} />
-										Desenvolvedor
-									</button>
-									<button
-										type="button"
-										className={`flex flex-col items-center justify-center p-3 rounded-lg border text-sm font-sans font-semibold transition-all cursor-pointer gap-2 ${userType === 'recruiter' ? 'border-primary bg-primary/10 text-main' : 'border-outline hover:border-outline-variant text-muted'}`}
-										onClick={() => setUserType('recruiter')}
-									>
-										<Briefcase size={18} />
-										Recrutador
-									</button>
-								</div>
-							</div>
-
-							{/* Campo GitHub (se for desenvolvedor) */}
-							{mode === 'register' && userType === 'developer' && (
+						{/* Campos dinâmicos de cadastro */}
+						{mode === 'register' && (
+							<>
+								{/* Campo de confirmação da senha */}
 								<div className="form-control w-full">
 									<label className="label py-1">
 										<span className="label-text text-muted font-sans text-xs font-semibold uppercase tracking-wider">
-											Username do GitHub
+											Confirme a Senha
 										</span>
 									</label>
 									<div className="relative flex items-center">
-										<GithubIcon
+										<Lock
 											size={18}
 											className="absolute left-3 text-muted pointer-events-none z-10"
 										/>
 										<input
-											type="text"
-											placeholder="Digite seu username do GitHub"
-											className="input input-bordered bg-base border-outline text-sm text-main font-sans w-full pl-10 focus:border-primary-variant focus:outline-none"
-											value={githubUsername}
-											onChange={({ target }) => setGithubUsername(target.value)}
-											required={userType === 'developer'}
+											type={showConfirmPassword ? 'text' : 'password'}
+											placeholder="Digite sua senha novamente"
+											className={inputClass}
+											value={confirmPassword}
+											onChange={({ target }) =>
+												setConfirmPassword(target.value)
+											}
+											required
 										/>
+										<button
+											type="button"
+											onClick={() =>
+												setShowConfirmPassword(!showConfirmPassword)
+											}
+											className="absolute right-3 text-muted hover:text-main transition-colors duration-200 cursor-pointer z-10"
+											aria-label={
+												showConfirmPassword ? 'Ocultar senha' : 'Mostrar senha'
+											}
+										>
+											{showConfirmPassword ? (
+												<EyeClosed size={18} />
+											) : (
+												<Eye size={18} />
+											)}
+										</button>
 									</div>
 								</div>
-							)}
-						</>
-					)}
 
-					{/* Botão de submit do formulário */}
-					<button
-						type="submit"
-						disabled={loading}
-						className="btn btn-primary w-full text-white font-sans mt-4 flex items-center justify-center gap-2 cursor-pointer"
-					>
-						{loading ? (
-							<span className="loading loading-spinner loading-sm" />
-						) : mode === 'login' ? (
-							'Entrar'
-						) : (
-							'Criar Conta'
+								{/* Campo seletor de tipo de usuário */}
+								<div className="form-control w-full">
+									<label className="label py-1">
+										<span className="label-text text-muted font-sans text-xs font-semibold uppercase tracking-wider">
+											Eu sou um:
+										</span>
+									</label>
+									<div className="grid grid-cols-2 gap-3">
+										<button
+											type="button"
+											className={`flex flex-col items-center justify-center p-3 rounded-lg border text-sm font-sans font-semibold transition-colors duration-200 cursor-pointer gap-2 ${
+												userType === 'developer'
+													? 'border-primary bg-primary/10 text-main'
+													: 'border-outline hover:border-outline-variant text-muted'
+											}`}
+											onClick={() => setUserType('developer')}
+										>
+											<Code size={18} />
+											Desenvolvedor
+										</button>
+										<button
+											type="button"
+											className={`flex flex-col items-center justify-center p-3 rounded-lg border text-sm font-sans font-semibold transition-colors duration-200 cursor-pointer gap-2 ${
+												userType === 'recruiter'
+													? 'border-primary bg-primary/10 text-main'
+													: 'border-outline hover:border-outline-variant text-muted'
+											}`}
+											onClick={() => setUserType('recruiter')}
+										>
+											<Briefcase size={18} />
+											Recrutador
+										</button>
+									</div>
+								</div>
+
+								{/* Campo GitHub (se for desenvolvedor) */}
+								{mode === 'register' && userType === 'developer' && (
+									<div className="form-control w-full">
+										<label className="label py-1">
+											<span className="label-text text-muted font-sans text-xs font-semibold uppercase tracking-wider">
+												Username do GitHub
+											</span>
+										</label>
+										<div className="relative flex items-center">
+											<GithubIcon
+												size={18}
+												className="absolute left-3 text-muted pointer-events-none z-10"
+											/>
+											<input
+												type="text"
+												placeholder="Digite seu username do GitHub"
+												className={inputClass}
+												value={githubUsername}
+												onChange={({ target }) =>
+													setGithubUsername(target.value)
+												}
+												required={userType === 'developer'}
+											/>
+										</div>
+									</div>
+								)}
+							</>
 						)}
-					</button>
-				</form>
 
-				{/* Divisor de Login Social */}
-				<div className="relative my-2">
-					<div className="absolute inset-0 flex items-center">
-						<span className="w-full border-t border-outline" />
-					</div>
-					<div className="relative flex justify-center text-xs uppercase">
-						<span className="bg-surface px-2 text-muted font-sans">
-							Ou continue com
-						</span>
-					</div>
-				</div>
+						{/* Botão de submit do formulário */}
+						<button
+							type="submit"
+							disabled={loading}
+							className="btn btn-primary w-full font-sans mt-4 flex items-center justify-center gap-2 transition-colors duration-200 cursor-pointer"
+						>
+							{loading ? (
+								<span className="loading loading-spinner loading-sm" />
+							) : mode === 'login' ? (
+								'Entrar'
+							) : (
+								'Criar Conta'
+							)}
+						</button>
+					</form>
 
-				{/* Grade de botões OAuth */}
-				<div className="grid grid-cols-2 gap-3">
-					<button
-						type="button"
-						onClick={() => handleSocialLogin('google')}
-						className="btn btn-outline border-outline hover:bg-bright text-xs text-main font-sans flex items-center justify-center gap-2 cursor-pointer"
-					>
-						<GoogleIcon size={16} />
-						Google
-					</button>
-					<button
-						type="button"
-						onClick={() => handleSocialLogin('github')}
-						className="btn btn-outline border-outline hover:bg-bright text-xs text-main font-sans flex items-center jsutify-center gap-2 cursor-pointer"
-					>
-						<GithubIcon size={16} />
-						GitHub
-					</button>
+					{/* Divisor de Login Social */}
+					<div className="relative my-2">
+						<div className="absolute inset-0 flex items-center">
+							<span className="w-full border-t border-outline" />
+						</div>
+						<div className="relative flex justify-center text-xs uppercase">
+							<span className="bg-surface px-2 text-muted font-sans">
+								Ou continue com
+							</span>
+						</div>
+					</div>
+
+					{/* Grade de botões OAuth */}
+					<div className="grid grid-cols-2 gap-3">
+						<button
+							type="button"
+							onClick={() => handleSocialLogin('google')}
+							className="btn btn-outline border-outline hover:bg-bright text-xs text-main font-sans flex items-center justify-center gap-2 transition-colors duration-200 cursor-pointer"
+						>
+							<GoogleIcon size={16} />
+							Google
+						</button>
+						<button
+							type="button"
+							onClick={() => handleSocialLogin('github')}
+							className="btn btn-outline border-outline hover:bg-bright text-xs text-main font-sans flex items-center justify-center gap-2 transition-colors duration-200 cursor-pointer"
+						>
+							<GithubIcon size={16} />
+							GitHub
+						</button>
+					</div>
 				</div>
 			</div>
 		</div>

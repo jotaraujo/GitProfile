@@ -9,7 +9,7 @@ interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
 
 const variantClasses = {
 	primary: 'btn-primary',
-	outline: 'btn-outline border-outline hover:bg-primary hover:text-main',
+	outline: 'btn-outline border-outline hover:bg-bright hover:text-main',
 	ghost: 'btn-ghost text-muted hover:text-main',
 }
 
@@ -35,7 +35,9 @@ const Button = ({
 		<button
 			type="button"
 			disabled={disabled || isLoading}
-			className={`btn ${variantClasses[variant]} ${sizeClasses[size]} ${fullWidth ? 'w-full' : ''} cursor-pointer transition-all duration-200 ${className}`}
+			className={`btn ${variantClasses[variant]} ${sizeClasses[size]} ${
+				fullWidth ? 'w-full' : ''
+			} transition-colors duration-200 active:scale-[0.98] ${className}`}
 			{...rest}
 		>
 			{isLoading ? (

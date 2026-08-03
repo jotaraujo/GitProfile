@@ -1,8 +1,8 @@
+import { Clock, Trash2 } from 'lucide-react'
 import { useEffect } from 'react'
+import { Link } from 'react-router-dom'
 import { useAuthStore } from '../store/useAuthStore'
 import { useSearchHistoryStore } from '../store/useSearchHistoryStore'
-import { Clock, Trash2 } from 'lucide-react'
-import { Link } from 'react-router-dom'
 
 const History = () => {
 	const { user } = useAuthStore()
@@ -57,7 +57,7 @@ const History = () => {
 					{history.map((item) => (
 						<div
 							key={item.username}
-							className="bg-surface border border-outline hover:border-outline-variant p-4 rounded-lg flex items-center justify-between transition-all group shadow-sm"
+							className="bg-surface border border-outline hover:border-outline-variant p-4 rounded-lg flex items-center justify-between transition-colors duration-200 group"
 						>
 							{/* Informações do usuário com link direto */}
 							<Link

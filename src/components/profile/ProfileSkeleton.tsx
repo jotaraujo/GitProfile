@@ -5,7 +5,7 @@ const ProfileSkeleton = () => {
 			<div className="bg-base lg:col-start-1 lg:row-span-2 lg:border-r border-outline flex flex-col items-center p-6 w-full gap-4">
 				<div className="skeleton w-32 h-32 rounded-md" />
 				<div className="skeleton h-6 w-48 mt-4" />
-				<div className="skeleton h-4 w-32 text-primary" />
+				<div className="skeleton h-4 w-32" />
 				<div className="skeleton h-4 w-full mt-2" />
 				<div className="skeleton h-4 w-3/4" />
 				<div className="skeleton h-6 w-full rounded-md mt-4" />

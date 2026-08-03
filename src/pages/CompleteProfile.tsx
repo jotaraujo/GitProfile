@@ -1,8 +1,9 @@
-import { useEffect, useState } from 'react'
-import { useAuthStore } from '../store/useAuthStore'
-import { useNavigate } from 'react-router-dom'
-import { supabase } from '../lib/supabase'
 import { AlertCircle, Briefcase, Code } from 'lucide-react'
+import { useEffect, useState } from 'react'
+import { useNavigate } from 'react-router-dom'
+import Logo from '../assets/logo.svg?react'
+import { supabase } from '../lib/supabase'
+import { useAuthStore } from '../store/useAuthStore'
 
 // SVG do GitHub oficial
 const GithubIcon = ({
@@ -46,7 +47,7 @@ const CompleteProfile = () => {
 		}
 	}, [user, navigate])
 
-	const handleSubmit = async (e: React.ChangeEvent) => {
+	const handleSubmit = async (e: React.ChangeEvent<HTMLFormElement>) => {
 		e.preventDefault()
 		if (!user) return
 		setLoading(true)
@@ -91,93 +92,132 @@ const CompleteProfile = () => {
 	}
 
 	return (
-		<div className="flex min-h-[calc(100svh-64px)] w-full items-center justify-center bg-base p-6">
-			<div className="bg-surface border border-outline rounded-lg p-8 max-w-md w-full flex flex-col gap-6 shadow-xl">
-				{/* Título */}
-				<div className="text-center flex flex-col gap-2">
-					<h1 className="text-main font-sans font-bold text-2xl tracking-tight">
-						Complete seu Perfil
-					</h1>
-					<p className="text-muted text-sm font-sans">
-						Selecione o seu perfil de uso para continuar navegando na plataforma
-					</p>
+		<div className="min-h-[calc(100svh-64px)] w-full bg-base lg:grid lg:grid-cols-2">
+			{/* Painel de marca — desktop */}
+			<aside className="hidden lg:flex flex-col justify-between p-12 border-r border-outline bg-surface/40">
+				<div className="flex items-center gap-2">
+					<Logo className="w-8 h-8" aria-hidden="true" />
+					<span className="text-lg font-bold text-main tracking-tight">
+						GitProfile
+					</span>
 				</div>
 
-				{/* Alerta de Erro */}
-				{error && (
-					<div className="flex items-center gap-3 p-4 bg-error/10 border border-error/20 text-error text-sm font-sans rounded-lg">
-						<AlertCircle size={16} className="flex-shrink-0" />
-						<span>{error}</span>
-					</div>
-				)}
+				<div className="flex flex-col gap-6 max-w-sm">
+					<span className="micro-label text-primary-variant">
+						Um passo para começar
+					</span>
+					<h2 className="text-3xl font-bold leading-tight tracking-tight text-main">
+						Como você quer usar o GitProfile?
+					</h2>
+					<ul className="flex flex-col gap-3 text-sm text-muted leading-relaxed">
+						<li>Como desenvolvedor — explore perfis e compare stacks</li>
+						<li>Como recrutador — monte o pipeline de triagem de candidatos</li>
+					</ul>
+				</div>
 
-				{/* Formulário */}
-				<form onSubmit={handleSubmit} className="flex flex-col gap-6">
-					{/* Seletor de tipo de usuário */}
-					<div className="form-control w-full">
-						<label className="label py-1">
-							<span className="label-text text-muted font-sans text-xs font-semibold uppercase tracking-wider">
-								Eu sou um:
-							</span>
-						</label>
-						<div className="grid grid-cols-2 gap-3">
-							<button
-								type="button"
-								onClick={() => setUserType('developer')}
-								className={`flex flex-col items-center justify-center p-4 rounded-lg border text-sm font-sans font-semibold transition-all cursor-pointer gap-2 ${userType === 'developer' ? 'border-primary bg-primary/10 text-main' : 'border-outline hover:border-outline-variant text-muted'}`}
-							>
-								<Code size={20} />
-								Desenvolvedor
-							</button>
-							<button
-								type="button"
-								onClick={() => setUserType('recruiter')}
-								className={`flex flex-col items-center justify-center p-4 rounded-lg border text-sm font-sans font-semibold transition-all cursor-pointer gap-2 ${userType === 'recruiter' ? 'border-primary bg-primary/10 text-main' : 'border-outline hover:border-outline-variant text-muted'}`}
-							>
-								<Briefcase size={20} />
-								Recrutador
-							</button>
-						</div>
+				<p className="text-xs font-mono text-muted">
+					gitprofile · sua escolha pode ser ajustada depois
+				</p>
+			</aside>
+
+			{/* Painel do formulário */}
+			<div className="flex items-center justify-center p-6">
+				<div className="bg-surface border border-outline rounded-lg p-8 max-w-md w-full flex flex-col gap-6 shadow-xl">
+					{/* Título */}
+					<div className="flex flex-col gap-2">
+						<h1 className="text-main font-sans font-bold text-2xl tracking-tight">
+							Complete seu perfil
+						</h1>
+						<p className="text-muted text-sm font-sans">
+							Selecione o seu perfil de uso para continuar navegando na
+							plataforma
+						</p>
 					</div>
 
-					{/* Campo GitHub condicional para desenvolvedores */}
-					{userType === 'developer' && (
-						<div className="form-control w-full">
-							<label className="label py-1">
-								<span className="label-text text-muted font-sans text-xs font-semibold uppercase tracking-wider">
-									Username do GitHub
-								</span>
-							</label>
-							<div className="relative flex items-center">
-								<GithubIcon
-									size={18}
-									className="absolute left-3 text-muted pointer-events-none z-10"
-								/>
-								<input
-									type="text"
-									placeholder="Digite seu username do GitHub"
-									className="input input-bordered bg-base border-outline text-sm text-main font-sans w-full pl-10 focus:border-primary-variant focus:outline-none"
-									value={githubUsername}
-									onChange={({ target }) => setGithubUsername(target.value)}
-									required={userType === 'developer'}
-								/>
-							</div>
+					{/* Alerta de Erro */}
+					{error && (
+						<div className="flex items-center gap-3 p-4 bg-error/10 border border-error/20 text-error text-sm font-sans rounded-lg">
+							<AlertCircle size={16} className="flex-shrink-0" />
+							<span>{error}</span>
 						</div>
 					)}
 
-					{/* Botão de Envio */}
-					<button
-						type="submit"
-						disabled={loading}
-						className="btn btn-primary w-full text-white font-sans mt-2 flex items-center justify-center gap-2 cursor-pointer"
-					>
-						{loading ? (
-							<span className="loading loading-spinner loading-sm" />
-						) : (
-							'Salvar e Continuar'
+					{/* Formulário */}
+					<form onSubmit={handleSubmit} className="flex flex-col gap-6">
+						{/* Seletor de tipo de usuário */}
+						<div className="form-control w-full">
+							<label className="label py-1">
+								<span className="label-text text-muted font-sans text-xs font-semibold uppercase tracking-wider">
+									Eu sou um:
+								</span>
+							</label>
+							<div className="grid grid-cols-2 gap-3">
+								<button
+									type="button"
+									onClick={() => setUserType('developer')}
+									className={`flex flex-col items-center justify-center p-4 rounded-lg border text-sm font-sans font-semibold transition-colors duration-200 cursor-pointer gap-2 ${
+										userType === 'developer'
+											? 'border-primary bg-primary/10 text-main'
+											: 'border-outline hover:border-outline-variant text-muted'
+									}`}
+								>
+									<Code size={20} />
+									Desenvolvedor
+								</button>
+								<button
+									type="button"
+									onClick={() => setUserType('recruiter')}
+									className={`flex flex-col items-center justify-center p-4 rounded-lg border text-sm font-sans font-semibold transition-colors duration-200 cursor-pointer gap-2 ${
+										userType === 'recruiter'
+											? 'border-primary bg-primary/10 text-main'
+											: 'border-outline hover:border-outline-variant text-muted'
+									}`}
+								>
+									<Briefcase size={20} />
+									Recrutador
+								</button>
+							</div>
+						</div>
+
+						{/* Campo GitHub condicional para desenvolvedores */}
+						{userType === 'developer' && (
+							<div className="form-control w-full">
+								<label className="label py-1">
+									<span className="label-text text-muted font-sans text-xs font-semibold uppercase tracking-wider">
+										Username do GitHub
+									</span>
+								</label>
+								<div className="relative flex items-center">
+									<GithubIcon
+										size={18}
+										className="absolute left-3 text-muted pointer-events-none z-10"
+									/>
+									<input
+										type="text"
+										placeholder="Digite seu username do GitHub"
+										className="input input-bordered bg-base border-outline text-sm text-main font-sans w-full pl-10 focus:border-primary-variant focus:outline-none"
+										value={githubUsername}
+										onChange={({ target }) => setGithubUsername(target.value)}
+										required={userType === 'developer'}
+									/>
+								</div>
+							</div>
 						)}
-					</button>
-				</form>
+
+						{/* Botão de Envio */}
+						<button
+							type="submit"
+							disabled={loading}
+							className="btn btn-primary w-full font-sans mt-2 flex items-center justify-center gap-2 transition-colors duration-200 cursor-pointer"
+						>
+							{loading ? (
+								<span className="loading loading-spinner loading-sm" />
+							) : (
+								'Salvar e Continuar'
+							)}
+						</button>
+					</form>
+				</div>
 			</div>
 		</div>
 	)

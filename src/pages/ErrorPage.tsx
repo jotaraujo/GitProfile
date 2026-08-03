@@ -1,5 +1,5 @@
-import { useRouteError, isRouteErrorResponse, Link } from 'react-router-dom'
-import { Compass, Lock, AlertTriangle, AlertCircle } from 'lucide-react'
+import { AlertCircle, AlertTriangle, Compass, Lock } from 'lucide-react'
+import { isRouteErrorResponse, Link, useRouteError } from 'react-router-dom'
 
 // Página de Erro (ErrorPage): Renderizada em caso de rotas inválidas ou erros críticos na aplicação
 const ErrorPage = () => {
@@ -52,7 +52,7 @@ const ErrorPage = () => {
 				</p>
 				<Link
 					to="/"
-					className="btn btn-outline border-outline text-main hover:border-primary-variant hover:text-primary-variant transition-all duration-200 motion-safe:hover:scale-[1.01] w-full mt-2"
+					className="btn btn-outline border-outline text-main hover:border-primary-variant hover:text-primary-variant transition-colors duration-200 w-full mt-2"
 				>
 					Voltar para Página Inicial
 				</Link>

@@ -176,9 +176,9 @@ const Profile = () => {
 					</p>
 					<Link
 						to="/"
-						className="btn btn-outline border-outline text-main hover:border-primary-variant hover:text-primary-variant transition-all duration-200 motion-safe:hover:scale-[1.01] w-full mt-2"
+						className="btn btn-outline border-outline text-main hover:border-primary-variant hover:text-primary-variant transition-colors duration-200 w-full mt-2"
 					>
-						Voltar para a Página Incial
+						Voltar para a Página Inicial
 					</Link>
 				</div>
 			</div>

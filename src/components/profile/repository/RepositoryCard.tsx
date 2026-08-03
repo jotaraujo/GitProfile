@@ -70,7 +70,7 @@ const RepositoryCard = ({ repository }: RepositoryCardProps) => {
 			{/* Card do repositório interativo (abre o modal ao clicar) */}
 			<div
 				onClick={() => setIsOpen(true)}
-				className="bg-surface border border-outline rounded-lg p-5 flex flex-col gap-3 transition-all duration-200 hover:border-primary-variant hover:bg-[#1b252f] motion-safe:hover:scale-[1.01] cursor-pointer"
+				className="bg-surface border border-outline rounded-lg p-5 flex flex-col gap-3 transition-colors duration-200 hover:border-primary-variant hover:bg-bright cursor-pointer"
 			>
 				{/* 1. CABEÇALHO: Título inerte e selo de visibilidade */}
 				<div className="flex items-center justify-between">
@@ -94,7 +94,7 @@ const RepositoryCard = ({ repository }: RepositoryCardProps) => {
 
 				{/* 2. DESCRIÇÃO: Breve resumo do projeto */}
 				<p className="text-muted text-sm leading-relaxed line-clamp-2">
-					{repository.description || <em>Nenhuma descrição fornecida.</em>}
+					{repository.description || <span>Nenhuma descrição fornecida.</span>}
 				</p>
 
 				{/* 3. METADADOS: Linguagem, estrelas, forks e última atualização */}

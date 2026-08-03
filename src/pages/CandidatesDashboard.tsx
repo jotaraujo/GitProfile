@@ -1,15 +1,15 @@
-import { useEffect, useState } from 'react'
-import { useAuthStore } from '../store/useAuthStore'
-import { supabase } from '../lib/supabase'
 import {
-	UserCheck,
 	Bookmark,
 	FolderGit2,
 	Pencil,
 	Trash2,
+	UserCheck,
 	X,
 } from 'lucide-react'
+import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
+import { supabase } from '../lib/supabase'
+import { useAuthStore } from '../store/useAuthStore'
 
 // Interface para as notas de triagem (Tabela: recruiter_notes)
 interface RecruiterNote {
@@ -174,7 +174,7 @@ const CandidatesDashboard = () => {
 				<button
 					type="button"
 					onClick={() => setActiveTab('notes')}
-					className={`flex items-center justify-center gap-2 py-2 px-3 text-xs md:text-sm font-sans font-semibold rounded-lg transition-all duration-300 ease-out active:scale-95 cursor-pointer ${activeTab === 'notes' ? 'bg-base text-main shadow-md border border-outline-variant' : 'text-muted hover:text-main'}`}
+					className={`flex items-center justify-center gap-2 py-2 px-3 text-xs md:text-sm font-sans font-semibold rounded-lg transition-colors duration-200 cursor-pointer ${activeTab === 'notes' ? 'bg-base text-main border border-outline-variant' : 'text-muted hover:text-main'}`}
 				>
 					<UserCheck size={16} />
 					Triagem ({notes.length})
@@ -183,7 +183,7 @@ const CandidatesDashboard = () => {
 				<button
 					type="button"
 					onClick={() => setActiveTab('profiles')}
-					className={`flex items-center justify-center gap-2 py-2 px-3 text-xs md:text-sm font-sans font-semibold rounded-lg transition-all ease-out active:scale-95 cursor-pointer ${activeTab === 'profiles' ? 'bg-base text-main shadow-md border border-outline-variant' : 'text-muted hover:text-main'}`}
+					className={`flex items-center justify-center gap-2 py-2 px-3 text-xs md:text-sm font-sans font-semibold rounded-lg transition-colors duration-200 cursor-pointer ${activeTab === 'profiles' ? 'bg-base text-main border border-outline-variant' : 'text-muted hover:text-main'}`}
 				>
 					<Bookmark size={16} />
 					Perfis ({savedProfiles.length})
@@ -192,7 +192,7 @@ const CandidatesDashboard = () => {
 				<button
 					type="button"
 					onClick={() => setActiveTab('repos')}
-					className={`flex items-center justify-center gap-2 py-2 px-3 text-xs md:text-sm font-sans font-semibold rounded-lg transition-all duration-300 ease-out active:scale-95 cursor-pointer ${activeTab === 'repos' ? 'bg-base text-main shadow-md border border-outline-variant' : 'text-muted hover:text-main'}`}
+					className={`flex items-center justify-center gap-2 py-2 px-3 text-xs md:text-sm font-sans font-semibold rounded-lg transition-colors duration-200 cursor-pointer ${activeTab === 'repos' ? 'bg-base text-main border border-outline-variant' : 'text-muted hover:text-main'}`}
 				>
 					<FolderGit2 size={16} />
 					Repositórios ({savedRepos.length})
@@ -224,7 +224,7 @@ const CandidatesDashboard = () => {
 								{notes.map((item) => (
 									<div
 										key={item.id}
-										className="flex flex-col justify-between gap-4 bg-surface border border-outline hover:border-outline-variant p-5 rounded-lg transition-all"
+										className="flex flex-col justify-between gap-4 bg-surface border border-outline hover:border-outline-variant p-5 rounded-lg transition-colors duration-200"
 									>
 										{/* cabeçalho do card */}
 										<div className="flex items-start justify-between gap-3">
@@ -246,7 +246,7 @@ const CandidatesDashboard = () => {
 
 											{/* Badge de Status Semântica */}
 											<span
-												className={`badge text-xs font-sans capitalize ${item.status === 'aprovado' ? 'badge-success text-white' : item.status === 'triagem' ? 'badge-info text-white' : item.status === 'recusado' ? 'badge-error text-white' : 'badge-warning text-white'}`}
+												className={`badge text-xs font-sans capitalize ${item.status === 'aprovado' ? 'badge-success' : item.status === 'triagem' ? 'badge-info' : item.status === 'recusado' ? 'badge-error' : 'badge-warning'}`}
 											>
 												{item.status}
 											</span>
@@ -416,7 +416,7 @@ const CandidatesDashboard = () => {
 								<button
 									type="submit"
 									disabled={saving}
-									className="btn btn-primary btn-sm text-white font-sans cursor-pointer"
+									className="btn btn-primary btn-sm font-sans transition-colors duration-200 cursor-pointer"
 								>
 									{saving ? (
 										<span className="loading loading-spinner loading-xs" />
@@ -458,7 +458,7 @@ const CandidatesDashboard = () => {
 								type="button"
 								disabled={saving}
 								onClick={handleDeleteNote}
-								className="btn btn-error btn-sm text-white font-sans cursor-pointer"
+								className="btn btn-error btn-sm font-sans transition-colors duration-200 cursor-pointer"
 							>
 								{saving ? (
 									<span className="loading loading-spinner loading-xs" />
