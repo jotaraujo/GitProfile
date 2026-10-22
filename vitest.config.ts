@@ -35,7 +35,10 @@ export default defineConfig({
 
     // Define quais arquivos serão considerados testes (unit e integration)
     // Testes de integração: .test.ts(x) | Testes Unitários: .spec.ts(x)
-    include: ["src/**/*.{spec,test}.{ts,tsx}"],
+    include: [
+      "src/**/*.{spec,test}.{ts,tsx}",
+      "tests/**/*.{spec,test}.{ts,tsx}",
+    ],
 
     // Tempo máximo para cada teste (em milissegundos)
     // antes de ser considerado travado ou falho
