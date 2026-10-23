@@ -11,7 +11,8 @@
 		"prepare": "husky",
 		"test": "vitest run --passWithNoTests",
 		"test:ui": "vitest ui",
-		"test:watch": "vitest"
+		"test:watch": "vitest",
+		"test:e2e": "playwright test"
 	},
 	"dependencies": {
 		"@hookform/resolvers": "^5.4.0",
@@ -31,6 +32,7 @@
 		"@commitlint/cli": "^21.0.2",
 		"@commitlint/config-conventional": "^21.0.2",
 		"@eslint/js": "^10.0.1",
+		"@playwright/test": "^1.64.1",
 		"@tailwindcss/vite": "^4.3.0",
 		"@testing-library/jest-dom": "^6.9.1",
 		"@testing-library/react": "^16.3.2",
