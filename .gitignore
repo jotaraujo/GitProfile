@@ -37,6 +37,7 @@ HALLMARK_AUDIT.md
 *.sw?
 .superpowers/
 .codex/
+test-results/
 
 # GitProfile - Apostilas
 
