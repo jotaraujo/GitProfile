@@ -113,12 +113,13 @@
 
 ### **Testes & Qualidade**
 
-| Tecnologia            | Finalidade                   |
-| --------------------- | ---------------------------- |
-| Vitest                | Unit & integration testing   |
-| React Testing Library | Component testing            |
-| MSW                   | API mocking                  |
-| Husky + Commitlint    | Git hooks & commit standards |
+| Tecnologia            | Finalidade                         |
+| --------------------- | ---------------------------------- |
+| Vitest                | Unit & integration testing         |
+| React Testing Library | Component testing                  |
+| Playwright            | End-to-End (E2E) testing           |
+| MSW                   | API mocking                        |
+| Husky + Commitlint    | Git hooks & commit standards       |
 
 ---
 
@@ -188,13 +189,43 @@ npm run dev          # Inicia servidor de desenvolvimento
 npm run build        # Build de produção
 npm run preview      # Preview do build
 
-# Testes
-npm run test         # Executa todos os testes
+# Testes (Unitários & Integração - Vitest)
+npm run test         # Executa todos os testes unitários e de integração
 npm run test:watch   # Modo watch para development
 npm run test:ui      # Interface visual do Vitest
 
+# Testes End-to-End (E2E - Playwright)
+npm run test:e2e     # Executa todos os testes E2E
+npx playwright test --ui  # Interface visual e interativa do Playwright
+
 # Qualidade de Código
 npm run lint         # ESLint check
+```
+
+---
+
+## 🔬 Estrutura e Cobertura de Testes
+
+A aplicação conta com uma pirâmide de testes robusta cobrindo as camadas unitária, de integração e ponta a ponta (E2E):
+
+```
+tests/
+├── unit/                 # Testes unitários (componentes básicos de UI, schemas Zod, utilitários)
+│   ├── components/       # Button, IconButton, Modal
+│   ├── utils/            # stackComparison
+│   └── validations/      # userSchema
+├── integration/          # Testes de integração com MSW e stubs
+│   ├── components/       # Componentes compostos (ProfileCard, RepositoryCard, etc.)
+│   ├── hooks/            # Hooks customizados e queries (useGithubUser, useGithubRepos, etc.)
+│   ├── pages/            # Telas completas (Home, Profile, Login, CompleteProfile, etc.)
+│   ├── routes/           # Layout e roteamento (RootLayout)
+│   ├── store/            # Gerenciamento de estado global com Zustand
+│   └── flows/            # Fluxos integrados de jornada do usuário
+└── mocks/                # Handlers de Mock Service Worker (MSW) e stubs do Supabase
+
+e2e/                      # Testes End-to-End com Playwright
+├── home.spec.ts          # Fluxos e validações da Home Page
+└── login.spec.ts         # Fluxos de autenticação na Login Page
 ```
 
 ---
@@ -253,8 +284,6 @@ git push origin feature/nova-funcionalidade
 ```
 
 ---
-
-## 👨‍💻 Autor
 
 **João Paulo Araújo**
 
