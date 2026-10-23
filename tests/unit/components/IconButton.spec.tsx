@@ -4,44 +4,49 @@ import { describe, it, expect, vi } from "vitest";
 import IconButton from "../../../src/components/ui/IconButton";
 
 describe("IconButton component", () => {
-  (it("renders children content correctly", () => {
+  it("renders button correctly", () => {
     render(<IconButton icon={<span data-testid="icon">Icon</span>} />);
+    expect(screen.getByRole("button")).toBeInTheDocument();
+  });
 
-    const buttonElement = screen.getByRole("button");
+  it("calls onClick when clicked", async () => {
+    const user = userEvent.setup();
+    const onClickMock = vi.fn();
+    render(<IconButton icon={<span>Icon</span>} onClick={onClickMock} />);
+    await user.click(screen.getByRole("button"));
+    expect(onClickMock).toHaveBeenCalledTimes(1);
+  });
 
-    expect(buttonElement).toBeDefined();
-  }),
-    it("calls the onClick handler when clicked", async () => {
-      const user = userEvent.setup();
-      const onClickMock = vi.fn();
+  it("does not call onClick when disabled", async () => {
+    const user = userEvent.setup();
+    const onClickMock = vi.fn();
+    render(<IconButton icon={<span>Icon</span>} disabled onClick={onClickMock} />);
+    await user.click(screen.getByRole("button"));
+    expect(onClickMock).not.toHaveBeenCalled();
+  });
 
-      render(
-        <IconButton
-          icon={<span data-testid="icon">Icon</span>}
-          onClick={onClickMock}
-        />,
-      );
+  it("applies tooltip as title", () => {
+    render(<IconButton icon={<span>Icon</span>} tooltip="Close" />);
+    expect(screen.getByRole("button")).toHaveAttribute("title", "Close");
+  });
 
-      const buttonElement = screen.getByRole("button");
-      await user.click(buttonElement);
+  it("renders icon content", () => {
+    render(<IconButton icon={<span data-testid="my-icon">X</span>} />);
+    expect(screen.getByTestId("my-icon")).toBeInTheDocument();
+  });
 
-      expect(onClickMock).toHaveBeenCalledTimes(1);
-    }),
-    it("should not call the onClick handler when disabled", async () => {
-      const user = userEvent.setup();
-      const onClickMock = vi.fn();
+  it("applies custom className", () => {
+    render(<IconButton icon={<span>Icon</span>} className="custom" />);
+    expect(screen.getByRole("button")).toHaveClass("custom");
+  });
 
-      render(
-        <IconButton
-          icon={<span data-testid="icon">Icon</span>}
-          disabled
-          onClick={onClickMock}
-        />,
-      );
+  it("renders with size sm by default", () => {
+    render(<IconButton icon={<span>Icon</span>} />);
+    expect(screen.getByRole("button")).toHaveClass("btn-sm");
+  });
 
-      const buttonElement = screen.getByRole("button");
-      await user.click(buttonElement);
-
-      expect(onClickMock).not.toHaveBeenCalled();
-    }));
+  it("renders with size md when specified", () => {
+    render(<IconButton icon={<span>Icon</span>} size="md" />);
+    expect(screen.getByRole("button")).toHaveClass("btn-md");
+  });
 });

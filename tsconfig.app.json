@@ -5,6 +5,9 @@
     "lib": ["ES2023", "DOM"],
     "module": "esnext",
     "types": ["vite/client", "vite-plugin-svgr/client", "vitest/globals"],
+    "paths": {
+      "@/*": ["./*"]
+    },
     "skipLibCheck": true,
 
     /* Bundler mode */
